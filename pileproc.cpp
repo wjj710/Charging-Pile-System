@@ -11,22 +11,26 @@ using namespace std;
 
 Pile *p; //充电桩指针
 SOCKET sock; //通信套接字
+HANDLE hMutex = CreateMutex(NULL,FALSE,NULL); //互斥锁，用来保证两个线程对sock的互斥访问
 
 DWORD WINAPI ThreadProc(LPVOID lpParameter)
 {
     //刚开始队列中都是空的，所以发送多个叫号请求
     for(int i=0; i<p->chargingQueueLen; i++){
         char *s="call\t";
+        WaitForSingleObject(hMutex, INFINITE);
         send(sock,s,strlen(s),NULL);
+        ReleaseMutex(hMutex);
     }
     while(1){
         //如果充电桩队列为空，就一直等待
         while(!p->chargingQueue.size());
         //如果队列不为空，就依次处理
         for(int i=0; i<p->chargingQueue.size(); i++){
+            //如果是关机或故障状态，则一直等待
+            while(p->workingState); 
             p->chargingQueue[i].startChargingTime=time(0); //记录开始充电的时间
             UINT timesec=(p->chargingQueue[i].requestChargingCapacity)*3600/p->power; //记录充电预计秒数
-            p->chargingQueueNum = p->chargingQueue[i].queueNum; //记录当前正在充电的充电请求排队号
             BOOL bRet = FALSE;
             MSG msg = {0};
             UINT timerid = SetTimer(NULL, 0, timesec*1000, NULL);
@@ -37,11 +41,14 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
                 }else{
                     //timer消息到达
                     if (msg.message == WM_TIMER){
-                        KillTimer(NULL, timerid); //关计时器
                         if (msg.wParam == timerid){
                             cout<<"timer reaching"<<endl;
                         }else{
-                            cout<<"charging interupt"<<endl;
+                            if(msg.lParam == p->chargingQueue[i].queueNum){
+                                cout<<"charging interupt"<<endl;
+                            }else{
+                                continue;
+                            }
                         }
                         break;
                     }else{
@@ -50,22 +57,26 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
                     }
                 }
             }
+            KillTimer(NULL, timerid); //关计时器
             p->chargingQueue[i].endChargingTime=time(0); //记录结束充电的时间
             time_t start = p->chargingQueue[i].startChargingTime;
             time_t end = p->chargingQueue[i].endChargingTime;
-            p->chargingQueue[i].chargingCapacity = (end-start)*p->power/3600; //记录实际充电量
+            p->chargingQueue[i].chargingCapacity = (end-start)*(p->power)/3600; //记录实际充电量
             p->chargingQueue[i].serviceFee = 0.8 * p->chargingQueue[i].chargingCapacity; //计算服务费用
             p->chargingQueue[i].chargingFee = p->calculateFee(start, end); //计算充电费用
             p->totalChargingFee += p->chargingQueue[i].chargingFee; //累加充电费用
             p->totalChargingNumber++; //累加充电次数
             p->totalChargingTime += (end-start); //累加充电时间
+            p->totalChargingCapacity += p->chargingQueue[i].chargingCapacity; //累加充电量
             //发送叫号请求并将此请求从队列中删除
             char *k="call/";
             char s[6+sizeof(Request)];
-            strcpy(s,k);
-            strcpy(s+5,(char *)(&p->chargingQueue[i]));
-            s[strlen(s)-1]='\t';
+            memcpy(s,k,5);
+            memcpy(s+5,(&p->chargingQueue[i]),sizeof(Request));
+            s[5+sizeof(Request)]='\t';
+            WaitForSingleObject(hMutex, INFINITE);
             send(sock,s,strlen(s)+1,NULL);
+            ReleaseMutex(hMutex);
             p->chargingQueue.erase(p->chargingQueue.begin()+i);
             i--;
         }
@@ -138,26 +149,50 @@ int main(int argc, char *argv[])
                     memcpy(b,sz+stb,count);
                 }
                 string s=h;
+                string ret=""; //用来存放调用方法的返回值
                 if(s=="turnOn"){
-                    
+                    ret=p->turnOn();
                 }else if(s=="turnOff"){
-
+                    ret=p->turnOff();
                 }else if(s=="insertIntoPileList"){
-
+                    ret=p->insertIntoPileList(*(Request *)b);
                 }else if(s=="removeFromPileList"){
-
+                    ret=p->removeFromPileList(threadid, *(int *)b);
                 }else if(s=="isEmpty"){
-
+                    ret=p->isEmpty();
                 }else if(s=="select"){
-                    
+                    ret=p->select(*(int *)b);
                 }else if(s=="clearQueue"){
-
+                    ret=p->clearQueue();
                 }else if(s=="malfunction"){
-
+                    if(p->workingState==2){ 
+                        ret="no/malfunction already happened\t";
+                    }else{
+                        if(p->chargingQueue.size()){
+                            PostThreadMessage(threadid,WM_TIMER,0,p->chargingQueue[0].queueNum);
+                        }
+                        ret="yes\t";
+                        p->workingState=2;
+                    }
+                }else if(s=="malfunctionRecover"){
+                    if(p->workingState!=2){ 
+                        ret="no/malfunction already recovered\t";
+                    }else{
+                        p->workingState=0;
+                        ret="yes\t";
+                    }
                 }else{
+                    ret="no/no such request\t";
                     cout<<"request error"<<endl;
                 }
+                //向服务器发响应
+                char bf[ret.size()];
+                strcpy(bf,ret.c_str());
+                WaitForSingleObject(hMutex, INFINITE);
+                send(sock,bf,strlen(bf),NULL);
+                ReleaseMutex(hMutex);
             }
         }
     }
+    return 0;
 }
