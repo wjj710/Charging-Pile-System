@@ -1,13 +1,13 @@
 #include <iostream>
 #include <stdlib.h>
-#include <winsock2.h>
-#include <winuser.h>
-#include <windows.h>
-#include <time.h>
+//#include <winsock2.h>
+//#include <winuser.h>
+//#include <windows.h>
+//#include <time.h>
 #include <ctype.h>
 #include "headers/Pile.h"
 #pragma comment (lib, "ws2_32.lib")  //加载 ws2_32.dll
-using namespace std;
+//using namespace std;
 
 Pile *p; //充电桩指针
 SOCKET sock; //通信套接字
@@ -113,6 +113,11 @@ int main(int argc, char *argv[])
         cout<<"connect error"<<endl;
         exit(1);
     }
+    string info="pileLogon/"+p->pileNo+"\t";
+    WaitForSingleObject(hMutex, INFINITE);
+    send(sock,info.c_str(),info.size(),NULL);
+    ReleaseMutex(hMutex);
+
     /*开始处理流程*/
 
     //首先创建一个线程用来对等候队列中的车充电，同时发送叫号请求
@@ -122,7 +127,6 @@ int main(int argc, char *argv[])
 
     //主线程用来接收服务器发来的请求，并进行相应的处理
     char sz[MAXBYTE] = {0};
-    int ret;
     while(ret=recv(sock, sz, MAXBYTE, NULL)){
         if(ret<0){
             cout<<"receive information error"<<endl;

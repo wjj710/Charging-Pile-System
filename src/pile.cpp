@@ -1,7 +1,6 @@
 #include "../headers/Pile.h"
 #include "../headers/PileInfo.h"
 #include <stdlib.h>
-#include <winuser.h>
 
 Pile::Pile(char *argv[])
 {
@@ -91,12 +90,12 @@ string Pile::select(int mode)
         }
         s+="\t";
     }else if(mode==2){
-        ReportInfo r={pileNo, totalChargingNumber, totalChargingTime, totalChargingCapacity
+        ReportInfo r={pileNo, totalChargingNumber, totalChargingTime, totalChargingCapacity,
                       totalChargingFee, 0.8*totalChargingCapacity, totalChargingFee+0.8*totalChargingCapacity};
         string k((char *)(&r), sizeof(ReportInfo));
         s+=(k+"\t");
     }else{
-        return "no/mode error\t";
+        s="no/mode error\t";
     }
     return s;
 }
