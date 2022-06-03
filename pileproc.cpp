@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     memset(&sockAddr, 0, sizeof(sockAddr));  //每个字节都用0填充
     sockAddr.sin_family = PF_INET;  //使用IPv4地址
     sockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    sockAddr.sin_port = htons(1234);  //端口
+    sockAddr.sin_port = htons(8080);  //端口
     int ret=connect(sock, (SOCKADDR*)&sockAddr, sizeof(SOCKADDR));
     if(ret){
         cout<<"connect error"<<endl;
