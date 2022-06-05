@@ -159,10 +159,28 @@ void Server::init(int fastPileNum, int tricklePileNum, int waitingSize, int char
             }else if (msgList[0]=="endRequest") {
                 ;
             }else if (msgList[0]=="getQueueNum") {
-                ;
+                try {
+                    User &tmpUsr = QueryController::getUserByID(QString::fromStdString(Global::mint2Str[descriptor]));
+                    ans = "yes/" + QueryController::getQueueNum(tmpUsr) + "\t";
+                } catch (const char *msg) {
+                    ans = "no/" + QString::fromStdString(msg) + "\t";
+                }
             }else if (msgList[0]=="getAheadNum") {
-                ;
+                try {
+                    User &tmpUsr = QueryController::getUserByID(QString::fromStdString(Global::mint2Str[descriptor]));
+                    ans = "yes/" + QString::fromStdString(std::to_string(QueryController::getAheadNum(tmpUsr))) + "\t";
+                } catch (const char *msg) {
+                    ans = "no/" + QString::fromStdString(msg) + "\t";
+                }
             }else if (msgList[0]=="getDetail") {
+                try {
+                    User &tmpUsr = QueryController::getUserByID(QString::fromStdString(Global::mint2Str[descriptor]));
+                    Detail ret = QueryController::getDetail(tmpUsr);
+                    ans = "yes/" + QString::fromStdString(std::to_string(ret.detailNo)) + "\t";
+                    // ans = "yes/" + Detail2Stream(ret) + "\t"; // TODO: Detail -> TCPStream
+                } catch (const char *msg) {
+                    ans = "no/" + QString::fromStdString(msg) + "\t";
+                }
                 ;
             }else if (msgList[0]=="turnOnPile") {
                 ;
