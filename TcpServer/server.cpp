@@ -187,11 +187,11 @@ void Server::init(int fastPileNum, int tricklePileNum, int waitingSize, int char
             }else if (msgList[0]=="turnOffPile") {
                 ;
             }else if (msgList[0]=="getPileInfo") {
-                ;
+                ans = "yes/"+QString::fromStdString(pileInfoController.generatePileInfo(msgList[1].toStdString()))+"\t";
             }else if (msgList[0]=="getCarInfo") {
-                ;
+                ans = "yes/"+QString::fromStdString(pileInfoController.generateCarInfo(msgList[1].toStdString()))+"\t";
             }else if (msgList[0]=="getReport") {
-                ;
+                ans = "yes/"+QString::fromStdString(pileInfoController.getReport(msgList[1].toStdString()))+"\t";
             }else if (msgList[0]=="malfunction") { //服务器前端发来的充电桩故障
                 //首先通知充电桩进程有故障
                 QString msg="malfunction\t";
