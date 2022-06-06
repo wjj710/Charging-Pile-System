@@ -1,7 +1,7 @@
 #ifndef REPORT_H
 #define REPORT_H
 #include <QDateTime>
-//Report
+//Report相关文件可能不打算用了，因为pileinfo里面设置了结构体，就不太需要单独准备一个类
 class Report
 {
 public:
