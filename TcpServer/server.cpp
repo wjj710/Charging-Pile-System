@@ -10,7 +10,7 @@ Server::Server(QObject *parent, int port):QTcpServer(parent)
     listen(QHostAddress::Any, port); //监听
 }
 
-void Server::sendMsg(QString msg, int descriptor)
+void Server::sendMsg(QString msg, qintptr descriptor)
 {
     for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)
     {
@@ -24,7 +24,7 @@ void Server::sendMsg(QString msg, int descriptor)
     }
 }
 
-void Server::incomingConnection(int socketDescriptor)
+void Server::incomingConnection(qintptr socketDescriptor)
 {
     //只要有新的连接就生成一个新的通信套接字
     TcpClientSocket *tcpclientsocket = new TcpClientSocket(this);
