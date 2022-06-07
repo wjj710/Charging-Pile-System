@@ -22,9 +22,9 @@ public:
     UserController userController;
 
     Server(QObject *parent = 0, int port = 0);
-    void sendMsg(QString msg, int descriptor); //向指定描述符对应的socket发消息
+    void sendMsg(QString msg, qintptr descriptor); //向指定描述符对应的socket发消息
 protected:
-    void incomingConnection(int socketDescriptor);//只要出现一个新的连接，就会自动调用这个函数
+    void incomingConnection(qintptr socketDescriptor);//只要出现一个新的连接，就会自动调用这个函数
 protected slots:
     void slotshow(QString, QHostAddress,int,bool);//用来处理tcpclient发过来的信号
     void slotclientdisconnect(int); //用来处理客户端断开连接
