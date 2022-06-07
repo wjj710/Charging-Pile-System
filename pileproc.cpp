@@ -1,17 +1,13 @@
 #include <iostream>
 #include <stdlib.h>
-//#include <winsock2.h>
-//#include <winuser.h>
-//#include <windows.h>
-//#include <time.h>
 #include <ctype.h>
 #include "headers/Pile.h"
 #pragma comment (lib, "ws2_32.lib")  //加载 ws2_32.dll
-//using namespace std;
 
 Pile *p; //充电桩指针
 SOCKET sock; //通信套接字
 HANDLE hMutex = CreateMutex(NULL,FALSE,NULL); //互斥锁，用来保证两个线程对sock的互斥访问
+HANDLE wMutex = CreateMutex(NULL,FALSE,NULL); //互斥锁，用来保证两个线程对chargingQueue的互斥访问
 
 DWORD WINAPI ThreadProc(LPVOID lpParameter)
 {
@@ -77,7 +73,9 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
             WaitForSingleObject(hMutex, INFINITE);
             send(sock,s,strlen(s)+1,NULL);
             ReleaseMutex(hMutex);
+            WaitForSingleObject(wMutex, INFINITE);
             p->chargingQueue.erase(p->chargingQueue.begin()+i);
+            ReleaseMutex(wMutex);
             i--;
         }
     }
@@ -166,8 +164,6 @@ int main(int argc, char *argv[])
                     ret=p->isEmpty();
                 }else if(s=="select"){
                     ret=p->select(*(int *)b);
-                }else if(s=="clearQueue"){
-                    ret=p->clearQueue();
                 }else if(s=="malfunction"){
                     if(p->workingState==2){ 
                         ret="no/malfunction already happened\t";

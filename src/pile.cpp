@@ -2,6 +2,8 @@
 #include "../headers/PileInfo.h"
 #include <stdlib.h>
 
+extern HANDLE wMutex;
+
 Pile::Pile(char *argv[])
 {
     pileNo=argv[1];
@@ -40,7 +42,9 @@ string Pile::insertIntoPileList(Request r1)
     }else if(workingState==2){
         return "no/pile malfunction\t";
     }
+    WaitForSingleObject(wMutex, INFINITE);
     chargingQueue.push_back(r1);
+    ReleaseMutex(wMutex);
     return "yes\t";
 }
 
@@ -57,7 +61,9 @@ string Pile::removeFromPileList(DWORD threadid, int qNum)
             if(i==0){ //说明此时该充电请求正在被处理，不能直接删除
                 PostThreadMessage(threadid,WM_TIMER,0,qNum);
             }else{
+                WaitForSingleObject(wMutex, INFINITE);
                 chargingQueue.erase(chargingQueue.begin()+i);
+                ReleaseMutex(wMutex);
             }
             return "yes\t";
         }
@@ -82,28 +88,43 @@ string Pile::select(int mode)
         string k((char *)(&p), sizeof(PileInfo));
         s+=(k+"\t");
     }else if(mode==1){
+        WaitForSingleObject(wMutex, INFINITE);
         for(int i=0; i<chargingQueue.size(); i++){
             CarInfo c={chargingQueue[i].ownerID, chargingQueue[i].batteryCapacity, 
                        chargingQueue[i].requestChargingCapacity, time(0)-chargingQueue[i].requestTime};
             string k((char *)(&c), sizeof(CarInfo));
             s+=k;
         }
+        ReleaseMutex(wMutex);
         s+="\t";
     }else if(mode==2){
         ReportInfo r={pileNo, totalChargingNumber, totalChargingTime, totalChargingCapacity,
                       totalChargingFee, 0.8*totalChargingCapacity, totalChargingFee+0.8*totalChargingCapacity};
         string k((char *)(&r), sizeof(ReportInfo));
         s+=(k+"\t");
+    }else if(mode==3){
+        vector<Request> v;
+        if(workingState==0){
+            if(chargingQueue.size()>1){
+                WaitForSingleObject(wMutex, INFINITE);
+                v.assign(chargingQueue.begin()+1,chargingQueue.end());
+                chargingQueue.erase(chargingQueue.begin()+1,chargingQueue.end());
+                ReleaseMutex(wMutex);
+            }
+        }else{
+            if(chargingQueue.size()>0){
+                WaitForSingleObject(wMutex, INFINITE);
+                v.assign(chargingQueue.begin(),chargingQueue.end());
+                chargingQueue.erase(chargingQueue.begin(),chargingQueue.end());
+                ReleaseMutex(wMutex);
+            }
+        }
+        string k((char *)(&v), v.size()*sizeof(Request));
+        s+=(k+"\t");
     }else{
         s="no/mode error\t";
     }
     return s;
-}
-
-string Pile::clearQueue()
-{
-    chargingQueue.clear();
-    return "yes\t";
 }
 
 double Pile::calculateFee(time_t start, time_t end)

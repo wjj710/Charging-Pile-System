@@ -24,7 +24,6 @@ class Pile
         string removeFromPileList(DWORD threadid, int qNum);      //将请求从充电桩队列中移除
         string isEmpty();                 //检查充电桩队列是否为空
         string select(int mode);          //从充电桩中获取信息，mode=0表示获取充电桩状态，mode=1表示获取车辆信息，mode=2表示获取报表信息
-        string clearQueue();              //把充电桩的等候队列清空
         double calculateFee(time_t start, time_t end);            //计算充电费用（假定充电时间不超过一天）
 };
 
