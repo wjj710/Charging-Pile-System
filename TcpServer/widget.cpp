@@ -10,6 +10,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
     port = 8080;
     server = new Server(this,port);
+    workerThread = new WorkerThread(this);
     connect(this,&Widget::sendinit,server,&Server::init);
     //设置充电桩类型下拉框
     QStringList strlist1;
@@ -22,11 +23,19 @@ Widget::Widget(QWidget *parent)
     //恢复按钮刚开始无效
     ui->recover->setDisabled(true);
 
+    connect(server, &Server::loopquit, workerThread, &WorkerThread::loopquit,Qt::DirectConnection);
     connect(server, &Server::showserver, this, &Widget::slotshow);
+    connect(workerThread, &WorkerThread::showserver, this, &Widget::slotshow);
 }
 
 Widget::~Widget()
 {
+    workerThread->quit();
+    for(int i=0; i<Global::proclist.size(); i++){
+        QProcess *p=Global::proclist.at(i);
+        p->kill();
+        free(p);
+    }
     delete ui;
 }
 void Widget::slotshow(QString msg, QHostAddress addr,int port,bool send)
@@ -45,6 +54,7 @@ void Widget::on_initialize_clicked()
 {
     emit sendinit(ui->fastPileNum->value(), ui->tricklePileNum->value(), ui->waitingSize->value(), ui->chargingQueueLen->value());
     ui->initialize->setDisabled(true);
+    if (!workerThread->isRunning()) workerThread->start(); //初始化后启动线程
 }
 
 //充电桩故障处理

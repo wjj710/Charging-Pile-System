@@ -16,36 +16,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    detail.cpp \
     global.cpp \
     main.cpp \
-    pilecontroller.cpp \
     pileinfocontroller.cpp \
-    querycontroller.cpp \
     report.cpp \
     request.cpp \
-    requestcontroller.cpp \
     server.cpp \
     tcpclientsocket.cpp \
     user.cpp \
     usercontroller.cpp \
-    widget.cpp
+    widget.cpp \
+    workerthread.cpp
 
 HEADERS += \
     global.h \
     pileinfo.h \
-    detail.h \
-    pilecontroller.h \
     pileinfocontroller.h \
-    querycontroller.h \
     report.h \
     request.h \
-    requestcontroller.h \
     server.h \
     tcpclientsocket.h \
     user.h \
     usercontroller.h \
-    widget.h
+    widget.h \
+    workerthread.h
 
 FORMS += \
     widget.ui

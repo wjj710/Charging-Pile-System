@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "server.h"
+#include "workerthread.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -19,6 +20,7 @@ private:
     Ui::Widget *ui;
     int port;
     Server* server;
+    WorkerThread *workerThread;
 protected slots:
     void slotshow(QString, QHostAddress, int,bool);//接收到server发过来的信号就更新界面的信息
 private slots:
