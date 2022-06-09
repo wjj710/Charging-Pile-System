@@ -159,11 +159,11 @@ int main(int argc, char *argv[])
                 }else if(s=="insertIntoPileList"){
                     ret=p->insertIntoPileList(*(Request *)b);
                 }else if(s=="removeFromPileList"){
-                    ret=p->removeFromPileList(threadid, *(int *)b);
+                    ret=p->removeFromPileList(threadid, atoi(b));
                 }else if(s=="isEmpty"){
                     ret=p->isEmpty();
                 }else if(s=="select"){
-                    ret=p->select(*(int *)b);
+                    ret=p->select(atoi(b));
                 }else if(s=="malfunction"){
                     if(p->workingState==2){ 
                         ret="no/malfunction already happened\t";
