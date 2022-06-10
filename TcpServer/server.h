@@ -19,7 +19,7 @@ protected slots:
 public slots:
     void init(int fastPileNum, int tricklePileNum, int waitingSize, int chargingQueueLen);
 signals:
-    void loopquit();
+    //void loopquit();
     void showserver(QString, QHostAddress,int,bool);//发送信号给界面，让界面更新信息
 };
 
