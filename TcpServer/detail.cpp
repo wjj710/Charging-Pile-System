@@ -16,8 +16,8 @@ Detail::Detail(Request& request) {
     chargingTime = int(request.endChargingTime - request.startChargingTime);
     startChargingTime = QDateTime::fromSecsSinceEpoch(request.startChargingTime);
     endChargingTime = QDateTime::fromSecsSinceEpoch(request.endChargingTime);
-    chargingFee = FeeManager.getChargingFee(request);                                   // FeeManager 亟待对接
-    serviceFee = FeeManager.getServiceFee(request);                                     // FeeManager 亟待对接
+    chargingFee = request.chargingFee;
+    serviceFee = request.serviceFee;
     allFee = chargingFee + serviceFee;
 }
 

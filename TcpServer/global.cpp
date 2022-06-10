@@ -25,3 +25,4 @@ std::string Global::malfunctionPileNo; //故障充电桩的编号，如果此时
 QList<QProcess *> Global::proclist; //充电桩进程队列
 QWaitCondition Global::condition;
 QMutex Global::mutex;
+QList<std::string> Global::l_call; // 存放未得到反馈的充电桩编号

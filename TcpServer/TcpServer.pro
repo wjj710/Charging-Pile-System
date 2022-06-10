@@ -26,7 +26,10 @@ SOURCES += \
     user.cpp \
     usercontroller.cpp \
     widget.cpp \
-    workerthread.cpp
+    workerthread.cpp \
+    querycontroller.cpp \
+    pilecontroller.cpp \
+    detail.cpp
 
 HEADERS += \
     global.h \
@@ -39,7 +42,10 @@ HEADERS += \
     user.h \
     usercontroller.h \
     widget.h \
-    workerthread.h
+    workerthread.h \
+    querycontroller.h \
+    pilecontroller.h \
+    detail.h
 
 FORMS += \
     widget.ui

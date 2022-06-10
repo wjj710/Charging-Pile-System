@@ -41,6 +41,7 @@ public:
     static QList<QProcess *> proclist; //充电桩进程队列
     static QWaitCondition condition;  //pileInfo的锁
     static QMutex mutex;
+    static QList<std::string> l_call; // 存放未得到反馈的充电桩编号
 };
 
 #endif // GLOBAL_H
