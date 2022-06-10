@@ -14,7 +14,7 @@ class WorkerThread : public QThread
 signals:
     void showserver(QString, QHostAddress,int,bool);//发送信号给界面，让界面更新信息
 
-public slots:
+/*public slots:
     void loopquit(){
         if(Global::loopNo==0){
             loop.quit();
@@ -26,9 +26,9 @@ public slots:
             //requestController.loop.quit();
         }
     }
-
+*/
 public:
-    QEventLoop loop;
+    //QEventLoop loop;
 
     //PileController pileController;
     PileInfoController pileInfoController;
@@ -95,11 +95,11 @@ public:
                 }else if (msgList[0]=="turnOffPile") {
                     ;
                 }else if (msgList[0]=="getPileInfo") {
-                    ans = "yes/"+QString::fromStdString(pileInfoController.generatePileInfo(msgList[1].toStdString()))+"\t";
+                    ans = QString::fromStdString(pileInfoController.generatePileInfo(msgList[1].toStdString()))+"\t";
                 }else if (msgList[0]=="getCarInfo") {
-                    ans = "yes/"+QString::fromStdString(pileInfoController.generateCarInfo(msgList[1].toStdString()))+"\t";
+                    ans = QString::fromStdString(pileInfoController.generateCarInfo(msgList[1].toStdString()))+"\t";
                 }else if (msgList[0]=="getReport") {
-                    ans = "yes/"+QString::fromStdString(pileInfoController.getReport(msgList[1].toStdString()))+"\t";
+                    ans = QString::fromStdString(pileInfoController.getReport(msgList[1].toStdString()))+"\t";
                 }else if (msgList[0]=="malfunction") { //服务器前端发来的充电桩故障
                     //首先通知充电桩进程有故障
                     QString msg="malfunction\t";
@@ -139,7 +139,7 @@ public:
                 }else{
                     ans = "no/message format error\t";
                 }*/
-                if(ans=="") return; //如果ans为空，说明不需要发返回消息
+                if(ans=="") continue; //如果ans为空，说明不需要发返回消息
                 sendMsg(ans,descriptor); //发送同步返回消息
             }
         }
@@ -152,6 +152,7 @@ public:
             if(item->socketDescriptor() == descriptor)
             {
                 item->write(msg.toUtf8().data());
+                item->flush();
                 emit showserver(msg,item->peerAddress(),item->peerPort(),1);// 发送给客户端设置为1
                 return;
             }
