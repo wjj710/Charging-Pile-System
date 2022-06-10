@@ -40,7 +40,8 @@ void Server::slotsend(QString msg,int descriptor){
     msgList.append(QString::number(descriptor));
     if(msgList[0]=="yes" || msgList[0]=="no"){ //说明不是请求，是充电桩的返回消息
         Global::buffer=msgList; //将收到的消息放到缓冲区
-        emit loopquit(); //向处理线程发信号，通知loop退出
+        //emit loopquit(); //向处理线程发信号，通知loop退出
+        Global::condition.wakeAll();
     }else{
         Global::handleList.append(msgList);
     }
