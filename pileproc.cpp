@@ -187,9 +187,9 @@ int main(int argc, char *argv[])
                 }
                 //向服务器发响应
                 char bf[ret.size()];
-                strcpy(bf,ret.c_str());
+                memcpy(bf,ret.c_str(),ret.size());
                 WaitForSingleObject(hMutex, INFINITE);
-                send(sock,bf,strlen(bf),NULL);
+                send(sock,bf,ret.size(),NULL);
                 ReleaseMutex(hMutex);
             }
         }

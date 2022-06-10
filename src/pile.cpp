@@ -7,8 +7,13 @@ extern HANDLE wMutex;
 Pile::Pile(char *argv[])
 {
     pileNo=argv[1];
+    workingState=0;
     power=atof(argv[2]);
     chargingQueueLen=atoi(argv[3]);
+    totalChargingTime=0;
+    totalChargingNumber=0;
+    totalChargingFee=0;
+    totalChargingCapacity=0;
 }
 
 string Pile::turnOn()
