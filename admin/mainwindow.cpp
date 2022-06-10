@@ -64,6 +64,10 @@ void MainWindow::self_init()
         ui->SlowNum->setText(list[2]);
         ui->WaitingNum->setText(list[3]);
         ui->ChargingNum->setText(list[4]);
+        ui->Fmode->setText("快充 max:"+list[1]);
+        ui->Tmode->setText("慢充 max:"+list[2]);
+        ui->Finfo->setText("快充 max:"+list[1]);
+        ui->Tinfo->setText("慢充 max:"+list[2]);
     }
     else
     {
@@ -270,7 +274,7 @@ void MainWindow::on_GetAllInfo_clicked()
 }
 void MainWindow::on_GetReport_clicked()
 {
-    QString message="getReport\t";
+    QString message="getReport/0\t";
     socket->write(message.toLatin1());
     socket->flush();
     allButtonOff();
