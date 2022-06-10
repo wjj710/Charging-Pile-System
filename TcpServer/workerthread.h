@@ -148,12 +148,12 @@ public:
                     }
                     try {
                         Request req = pileController.call(QString::fromStdString(Global::mint2Str[descriptor]));
-                        Global::mstr2Int[req.ownerID] = descriptor + 1; // FIXME: 冒烟测试专用
+                        // Global::mstr2Int[req.ownerID] = descriptor + 1; // FIXME: 冒烟测试专用
                         // QueryController::getUserByID(QString::fromStdString(req.ownerID)).changeState(CHARGING); TODO: 与 User 类对接
                         string req_str((char *)(&req), sizeof(req));
                         ans = "insertIntoPileList/" + QString::fromStdString(req_str) + "\t";
                         sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
-                    } catch (const char *msg) {
+                    } catch (...) {
                         Global::l_call.append(Global::mint2Str[descriptor]); // 放入无可调度的充电桩信息
                     }
                 }/*else if(msgList[0]=="adminLogon"){ //管理员登录，管理员端需要在建立连接后发此消息，获取初始化信息（此消息无参数）
