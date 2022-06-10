@@ -23,7 +23,7 @@ Widget::Widget(QWidget *parent)
     //恢复按钮刚开始无效
     ui->recover->setDisabled(true);
 
-    connect(server, &Server::loopquit, workerThread, &WorkerThread::loopquit,Qt::DirectConnection);
+   // connect(server, &Server::loopquit, workerThread, &WorkerThread::loopquit,Qt::DirectConnection);
     connect(server, &Server::showserver, this, &Widget::slotshow);
     connect(workerThread, &WorkerThread::showserver, this, &Widget::slotshow);
 }
