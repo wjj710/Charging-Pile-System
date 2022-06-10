@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 #include <QEventLoop>
+#include <QWaitCondition>
+#include <QMutex>
 #include <QProcess>
 #include "request.h"
 #include "user.h"
@@ -35,9 +37,10 @@ public:
     static QList<Request> l_priority; //优先级队列，因为是全局变量，初始化之前要先清空
     static QList<Request> l_time; //时间顺序队列，初始化之前要先清空
     static std::string malfunctionPileNo; //故障充电桩的编号，如果此时没有故障充电桩就是空字符串
-    static int loopNo; //当前事件循环编号，用于同步通信（0代表server类中的loop，1代表pileController中的，2代表pileInfoController中的，3表示requestController中的）
+  //  static int loopNo; //当前事件循环编号，用于同步通信（0代表server类中的loop，1代表pileController中的，2代表pileInfoController中的，3表示requestController中的）
     static QList<QProcess *> proclist; //充电桩进程队列
-
+    static QWaitCondition condition;  //pileInfo的锁
+    static QMutex mutex;
 };
 
 #endif // GLOBAL_H
