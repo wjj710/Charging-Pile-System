@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "headers/Pile.h"
+#define MAXLEN 1000
 #pragma comment (lib, "ws2_32.lib")  //加载 ws2_32.dll
 
 Pile *p; //充电桩指针
@@ -124,14 +125,14 @@ int main(int argc, char *argv[])
     CloseHandle(thread);
 
     //主线程用来接收服务器发来的请求，并进行相应的处理
-    char sz[MAXBYTE] = {0};
-    while(ret=recv(sock, sz, MAXBYTE, NULL)){
+    char sz[MAXLEN] = {0};
+    while(ret=recv(sock, sz, MAXLEN, NULL)){
         if(ret<0){
             cout<<"receive information error"<<endl;
             exit(1);
         }else{
             int i=0; //字符串指针
-            while(i<MAXBYTE){
+            while(i<MAXLEN){
                 if(!isalpha(sz[i])) break; //不是有效报文头，退出循环
                 int sth=i; //记录报文的起始位置
                 while(sz[i]!='/'&&sz[i]!='\t') i++;
@@ -192,7 +193,7 @@ int main(int argc, char *argv[])
                 send(sock,bf,ret.size(),NULL);
                 ReleaseMutex(hMutex);
             }
-            memset(sz,0,MAXBYTE);
+            memset(sz,0,MAXLEN);
         }
     }
     return 0;
