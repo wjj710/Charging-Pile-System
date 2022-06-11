@@ -1,7 +1,8 @@
 #ifndef CHARGING_PILE_SYSTEM_PILE_CONTROLLER_H
 #define CHARGING_PILE_SYSTEM_PILE_CONTROLLER_H
-#include "pile.h"
+//#include "pile.h"
 #include <QString>
+#include "request.h"
 
 // PileController
 // 接口参数与内部细节仍需调整，尚未完工

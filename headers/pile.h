@@ -20,7 +20,7 @@ class Pile
         Pile(char *argv[]);               //构造函数
         string turnOn();                  //打开充电桩
         string turnOff();                 //关闭充电桩
-        string insertIntoPileList(Request r1);                    //将请求插入充电桩队列
+        string insertIntoPileList(Request *r1);                    //将请求插入充电桩队列
         string removeFromPileList(DWORD threadid, int qNum);      //将请求从充电桩队列中移除
         string isEmpty();                 //检查充电桩队列是否为空
         string select(int mode);          //从充电桩中获取信息，mode=0表示获取充电桩状态，mode=1表示获取车辆信息，mode=2表示获取报表信息

@@ -12,7 +12,7 @@ struct PileInfo{
 
 //车辆信息
 struct CarInfo{
-    std::string ownerID;           //发出请求的用户id
+    char ownerID[8];           //发出请求的用户id
     double batteryCapacity;   //电池容量
     double requestChargingCapacity;  //请求充电电量
     time_t queueTime;         //排队时长（秒）
@@ -20,7 +20,7 @@ struct CarInfo{
 
 //报表信息
 struct ReportInfo{
-    std::string pileNo;        //充电桩编号，格式与排队号相似，比如快充电桩为F后跟一数字
+    char pileNo[8];        //充电桩编号，格式与排队号相似，比如快充电桩为F后跟一数字
     int totalChargingNumber;       //累计充电次数
     time_t totalChargingTime;      //累计充电时间
     double totalChargingCapacity;  //累计充电量

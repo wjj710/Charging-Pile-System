@@ -40,7 +40,7 @@ string Pile::turnOff()
     }
 }
 
-string Pile::insertIntoPileList(Request r1)
+string Pile::insertIntoPileList(Request *r1)
 {
     if(workingState==1){
         return "no/already turned off\t";
@@ -48,7 +48,7 @@ string Pile::insertIntoPileList(Request r1)
         return "no/pile malfunction\t";
     }
     WaitForSingleObject(wMutex, INFINITE);
-    chargingQueue.push_back(r1);
+    chargingQueue.push_back(*r1);
     ReleaseMutex(wMutex);
     return "yes\t";
 }
@@ -95,7 +95,7 @@ string Pile::select(int mode)
     }else if(mode==1){
         WaitForSingleObject(wMutex, INFINITE);
         for(int i=0; i<chargingQueue.size(); i++){
-            CarInfo c={chargingQueue[i].ownerID, chargingQueue[i].batteryCapacity, 
+            CarInfo c={chargingQueue[i].ownerID[8], chargingQueue[i].batteryCapacity, 
                        chargingQueue[i].requestChargingCapacity, time(0)-chargingQueue[i].requestTime};
             string k((char *)(&c), sizeof(CarInfo));
             s+=k;
@@ -103,7 +103,7 @@ string Pile::select(int mode)
         ReleaseMutex(wMutex);
         s+="\t";
     }else if(mode==2){
-        ReportInfo r={pileNo, totalChargingNumber, totalChargingTime, totalChargingCapacity,
+        ReportInfo r={pileNo.c_str()[8], totalChargingNumber, totalChargingTime, totalChargingCapacity,
                       totalChargingFee, 0.8*totalChargingCapacity, totalChargingFee+0.8*totalChargingCapacity};
         string k((char *)(&r), sizeof(ReportInfo));
         s+=(k+"\t");

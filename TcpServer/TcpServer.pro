@@ -20,16 +20,16 @@ SOURCES += \
     main.cpp \
     pileinfocontroller.cpp \
     report.cpp \
-    request.cpp \
+    #request.cpp \
     server.cpp \
     tcpclientsocket.cpp \
     user.cpp \
     usercontroller.cpp \
     widget.cpp \
     workerthread.cpp \
-    querycontroller.cpp \
+    #querycontroller.cpp \
     pilecontroller.cpp \
-    detail.cpp
+    #detail.cpp
 
 HEADERS += \
     global.h \

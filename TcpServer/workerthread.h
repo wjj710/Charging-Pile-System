@@ -68,7 +68,7 @@ public:
                     ;
                 }else if (msgList[0]=="endRequest") {
                     ;
-                }else if (msgList[0]=="getQueueNum") {
+                }/*else if (msgList[0]=="getQueueNum") {
                     try {
                         User &tmpUsr = QueryController::getUserByID(QString::fromStdString(Global::mint2Str[descriptor]));
                         ans = "yes/" + QueryController::getQueueNum(tmpUsr) + "\t";
@@ -87,12 +87,12 @@ public:
                         User &tmpUsr = QueryController::getUserByID(QString::fromStdString(Global::mint2Str[descriptor]));
                         Detail ret = QueryController::getDetail(tmpUsr);
                         ans = "yes/" + QString::fromStdString(std::to_string(ret.detailNo)) + "\t";
-                        string ret_str((char *)(&ret), sizeof(ret));
+                        std::string ret_str((char *)(&ret), sizeof(ret));
                         ans = "yes/" + QString::fromStdString(ret_str) + "\t";
                     } catch (const char *msg) {
                         ans = "no/" + QString::fromStdString(msg) + "\t";
                     }
-                }else if (msgList[0]=="turnOnPile") {
+                }*/else if (msgList[0]=="turnOnPile") {
                     if(msgList[1]=="0")
                         for(auto & it : Global::lp) {
                             sendMsg("turnOn\t", Global::mstr2Int[it]);
@@ -139,24 +139,26 @@ public:
                     // }
                     pileController.malfunction(descriptor,2);
                 }*/else if(msgList[0]=="call"){ //充电桩叫号
+                    qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
                     //先检查call请求有没有带参数Request，如果有就加入l2
-                    if(msgList.size()>1){
-                        char *s=msgList[1].toUtf8().data();
-                        Request r=*(Request *)s;
-                        Global::l2.append(r);
-                        sendMsg("chargingToFinish\t",Global::mstr2Int[r.ownerID]); //给对应的用户发异步消息通知状态变化
-                    }
+//                    if(msgList.size()>1){
+//                        char *s=msgList[1].toUtf8().data();
+//                        Request r=*(Request *)s;
+//                        Global::l2.append(r);
+//                        sendMsg("chargingToFinish\t",Global::mstr2Int[r.ownerID]); //给对应的用户发异步消息通知状态变化
+//                    }
                     try {
                         Request req = pileController.call(QString::fromStdString(Global::mint2Str[descriptor]));
+                        req.requestChargingCapacity=40;
                         // Global::mstr2Int[req.ownerID] = descriptor + 1; // FIXME: 冒烟测试专用
                         // QueryController::getUserByID(QString::fromStdString(req.ownerID)).changeState(CHARGING); TODO: 与 User 类对接
-                        string req_str((char *)(&req), sizeof(req));
-                        ans = "insertIntoPileList/" + QString::fromStdString(req_str) + "\t";
-                        sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
+                        std::string req_str((char *)(&req), sizeof(req));
+                        ans = QString::fromStdString("insertIntoPileList/" + req_str + "\t");
+                        //sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
                     } catch (...) {
                         Global::l_call.append(Global::mint2Str[descriptor]); // 放入无可调度的充电桩信息
                     }
-                }/*else if(msgList[0]=="adminLogon"){ //管理员登录，管理员端需要在建立连接后发此消息，获取初始化信息（此消息无参数）
+                }else if(msgList[0]=="adminLogon"){ //管理员登录，管理员端需要在建立连接后发此消息，获取初始化信息（此消息无参数）
                     ans="yes/"+QString::number(Global::fastChargingPileNum)+"/"+QString::number(Global::trickleChargingPileNum)
                         +"/"+QString::number(Global::waitingAreaSize)+"/"+QString::number(Global::chargingQueueLen)+"\t";
                 }else if(msgList[0]=="pileLogon"){ //充电桩登录，使服务器获取充电桩信息，充电桩进程建立连接后发送此消息
@@ -164,9 +166,11 @@ public:
                     Global::mstr2Int[msgList[1].toStdString()]=descriptor;
                 }else{
                     ans = "no/message format error\t";
-                }*/
+                }
                 if(ans=="") continue; //如果ans为空，说明不需要发返回消息
                 sendMsg(ans,descriptor); //发送同步返回消息
+            }else{
+                continue;
             }
         }
     }
@@ -177,10 +181,11 @@ public:
             QTcpSocket *item = Global::tcpclientsocketlist.at(i);
             if(item->socketDescriptor() == descriptor)
             {
-                item->write(msg.toUtf8().data());
+                item->write(msg.toLatin1().data(),msg.size());
                 item->flush();
+                qDebug()<<"send to pile: "<<descriptor<<msg;
                 emit showserver(msg,item->peerAddress(),item->peerPort(),1);// 发送给客户端设置为1
-                return;
+                break;
             }
         }
     }
