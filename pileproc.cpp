@@ -135,8 +135,8 @@ int main(int argc, char *argv[])
                 if(!isalpha(sz[i])) break; //不是有效报文头，退出循环
                 int sth=i; //记录报文的起始位置
                 while(sz[i]!='/'&&sz[i]!='\t') i++;
-                char h[25]; //用来存放报头
-                char b[150]; //用来存放参数
+                char h[50]; //用来存放报头
+                char b[500]; //用来存放参数
                 char c=sz[i];
                 sz[i++]='\0'; //移动指针并且将报头末尾置为\0
                 strcpy(h,sz+sth);
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
                         ret="yes\t";
                     }
                 }else{
-                    ret="no/no such request\t";
+                    ret="no/no such request:"+to_string(i)+"\t";
                     cout<<"request error"<<endl;
                 }
                 //向服务器发响应
@@ -192,6 +192,7 @@ int main(int argc, char *argv[])
                 send(sock,bf,ret.size(),NULL);
                 ReleaseMutex(hMutex);
             }
+            memset(sz,0,MAXBYTE);
         }
     }
     return 0;
