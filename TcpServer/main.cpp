@@ -1,6 +1,7 @@
 #include "widget.h"
-
+#include "dbfacade.h"
 #include <QApplication>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
