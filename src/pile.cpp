@@ -95,16 +95,25 @@ string Pile::select(int mode)
     }else if(mode==1){
         WaitForSingleObject(wMutex, INFINITE);
         for(int i=0; i<chargingQueue.size(); i++){
-            CarInfo c={chargingQueue[i].ownerID[8], chargingQueue[i].batteryCapacity, 
-                       chargingQueue[i].requestChargingCapacity, time(0)-chargingQueue[i].requestTime};
+            CarInfo c;
+            strcpy(c.ownerID, chargingQueue[i].ownerID);
+            c.batteryCapacity=chargingQueue[i].batteryCapacity;
+            c.requestChargingCapacity=chargingQueue[i].requestChargingCapacity;
+            c.queueTime=time(0)-chargingQueue[i].requestTime;
             string k((char *)(&c), sizeof(CarInfo));
             s+=k;
         }
         ReleaseMutex(wMutex);
         s+="\t";
     }else if(mode==2){
-        ReportInfo r={pileNo.c_str()[8], totalChargingNumber, totalChargingTime, totalChargingCapacity,
-                      totalChargingFee, 0.8*totalChargingCapacity, totalChargingFee+0.8*totalChargingCapacity};
+        ReportInfo r;
+        strcpy(r.pileNo,pileNo.c_str());
+        r.totalChargingNumber=totalChargingNumber;
+        r.totalChargingTime=totalChargingTime;
+        r.totalChargingCapacity=totalChargingCapacity;
+        r.totalChargingFee=totalChargingFee;
+        r.totalServiceFee=0.8*totalChargingCapacity;
+        r.totalAllFee=totalChargingFee+0.8*totalChargingCapacity;
         string k((char *)(&r), sizeof(ReportInfo));
         s+=(k+"\t");
     }else if(mode==3){

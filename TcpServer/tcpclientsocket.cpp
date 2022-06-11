@@ -1,4 +1,5 @@
 #include "tcpclientsocket.h"
+#include <QDebug>
 
 TcpClientSocket::TcpClientSocket(QObject *parent)
 {
@@ -13,6 +14,7 @@ TcpClientSocket::TcpClientSocket(QObject *parent)
 void TcpClientSocket::receivedata()
 {
     QByteArray array = readAll();
+    qDebug()<<"receive bytearray"<<array<<Qt::endl;
     QString msg = array;
     QStringList msgList = msg.split("\t"); //分解各个报文
     for(int i=0; i<msgList.size(); i++){
