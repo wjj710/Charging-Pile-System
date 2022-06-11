@@ -6,6 +6,7 @@
 #include "tcpclientsocket.h"
 #include "querycontroller.h"
 #include "pilecontroller.h"
+#include "usercontroller.h"
 
 /* 新建一个 WorkerThread 类继承于 QThread */
 class WorkerThread : public QThread
@@ -54,11 +55,11 @@ public:
                 int descriptor = msgList[msgList.size()-1].toInt(); //从请求中分离出socket描述符
                 msgList.removeLast(); //分离之后将socket描述符删除
 
-                if(msgList[0]=="logon"){
-                    //ans=userController.logon(msgList[1], msgList[2]);
+                if(msgList[0]=="login"){
+                    ans=userController.login(descriptor, msgList[1], msgList[2]);
                     //注意用户登录时要创建用户类，加入用户队列usr并更新mstr2Int和mint2Str
-                }else if (msgList[0]=="register") {
-                    //ans=userController.register(msgList[1], msgList[2]);
+                }else if (msgList[0]=="logon") {
+                    ans=userController.registration(descriptor, msgList[1], msgList[2]);
                 }else if(msgList[0]=="pay"){
                     //ans=userController.pay(msgList[1]);
                     //详见消息格式文档

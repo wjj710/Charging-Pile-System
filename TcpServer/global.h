@@ -14,7 +14,7 @@
 #include "pileinfocontroller.h"
 //#include "querycontroller.h"
 //#include "requestcontroller.h"
-#include "usercontroller.h"
+//#include "usercontroller.h"
 
 //全局变量类，使用全局变量时在变量名前加"Global::"，如Global::waitingAreaSize，同时要include "global.h"
 class Global

@@ -34,7 +34,7 @@ Detail QueryController::getDetail(User &user) {
 
 User &QueryController::getUserByID(const QString& userID) {
     for(auto & it: Global::usr)
-        if(it.ID == userID)
+        if(it.getID() == userID)
             return it;
     throw "User Not Found";
 }
