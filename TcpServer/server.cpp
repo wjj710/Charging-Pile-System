@@ -38,8 +38,10 @@ void Server::slotsend(QString msg,int descriptor){
 
     QStringList msgList = msg.split("/");
     msgList.append(QString::number(descriptor));
+    QList<QByteArray> arrayList = pre_msg.split('/');
     if(msgList[0]=="yes" || msgList[0]=="no"){ //说明不是请求，是充电桩的返回消息
         Global::buffer=msgList; //将收到的消息放到缓冲区
+        Global::bytebuffer=arrayList;
         //emit loopquit(); //向处理线程发信号，通知loop退出
         Global::condition.wakeAll();
     }else{
