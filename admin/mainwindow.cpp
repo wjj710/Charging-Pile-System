@@ -195,7 +195,6 @@ void MainWindow::on_GetState_clicked()
     QByteArray msg = socket->readAll();
     qDebug()<<msg;
     PileInfo* pileinfo=reinterpret_cast<PileInfo *>(msg.data());
-    qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
     int state=pileinfo->workingState;
     if(state==0)
         text+="    充电桩状态：开启\n";
@@ -205,7 +204,7 @@ void MainWindow::on_GetState_clicked()
     int chargingnumber=pileinfo->totalChargingNumber;
     text+="    充电总次数："+QString::number(chargingnumber)+"\n";
     time_t chargingtime=pileinfo->totalChargingTime;
-    text+="    充电总时长："+QString::number(chargingtime)+"\n";
+    text+="    充电总时长："+timetran(chargingtime)+"\n";
     double chargingcapacity=pileinfo->totalChargingCapacity;
     text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     ui->State->setText(text);
@@ -241,7 +240,6 @@ void MainWindow::on_GetAllState_clicked()
         QByteArray msg = socket->readAll();
         qDebug()<<msg;
         PileInfo* pileinfo=reinterpret_cast<PileInfo *>(msg.data());
-        qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
         int state=pileinfo->workingState;
         if(state==0)
             text+="    充电桩状态：开启\n";
@@ -251,7 +249,7 @@ void MainWindow::on_GetAllState_clicked()
         int chargingnumber=pileinfo->totalChargingNumber;
         text+="    充电总次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=pileinfo->totalChargingTime;
-        text+="    充电总时长："+QString::number(chargingtime)+"\n";
+        text+="    充电总时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=pileinfo->totalChargingCapacity;
         text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     }
@@ -270,7 +268,6 @@ void MainWindow::on_GetAllState_clicked()
         QByteArray msg = socket->readAll();
         qDebug()<<msg;
         PileInfo* pileinfo=reinterpret_cast<PileInfo *>(msg.data());
-        qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
         int state=pileinfo->workingState;
         if(state==0)
             text+="    充电桩状态：开启\n";
@@ -280,7 +277,7 @@ void MainWindow::on_GetAllState_clicked()
         int chargingnumber=pileinfo->totalChargingNumber;
         text+="    充电总次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=pileinfo->totalChargingTime;
-        text+="    充电总时长："+QString::number(chargingtime)+"\n";
+        text+="    充电总时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=pileinfo->totalChargingCapacity;
         text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     }
@@ -320,9 +317,9 @@ void MainWindow::on_GetInfo_clicked()
         double batterycapacity=c->batteryCapacity;
         text+="    电池容量："+QString::number(batterycapacity)+"\n";
         double request=c->requestChargingCapacity;
-        text+="    请求充电点量："+QString::number(request)+"\n";
+        text+="    请求充电量："+QString::number(request)+"\n";
         time_t time=c->queueTime;
-        text+="    排队时长："+QString::number(time)+"\n";
+        text+="    排队时长："+timetran(time)+"\n";
     }
     ui->Info->setText(text);
 }
@@ -359,9 +356,9 @@ void MainWindow::on_GetAllInfo_clicked()
             double batterycapacity=c->batteryCapacity;
             text+="    电池容量："+QString::number(batterycapacity)+"\n";
             double request=c->requestChargingCapacity;
-            text+="    请求充电点量："+QString::number(request)+"\n";
+            text+="    请求充电量："+QString::number(request)+"\n";
             time_t time=c->queueTime;
-            text+="    排队时长："+QString::number(time)+"\n";
+            text+="    排队时长："+timetran(time)+"\n";
         }
     }
     for(int i=1; i<=TrickleChargingPileNum; i++)
@@ -393,9 +390,9 @@ void MainWindow::on_GetAllInfo_clicked()
             double batterycapacity=c->batteryCapacity;
             text+="    电池容量："+QString::number(batterycapacity)+"\n";
             double request=c->requestChargingCapacity;
-            text+="    请求充电点量："+QString::number(request)+"\n";
+            text+="    请求充电量："+QString::number(request)+"\n";
             time_t time=c->queueTime;
-            text+="    排队时长："+QString::number(time)+"\n";
+            text+="    排队时长："+timetran(time)+"\n";
         }
     }
     ui->Info->setText(text);
@@ -425,7 +422,7 @@ void MainWindow::on_GetReport_clicked()
         int chargingnumber=report->totalChargingNumber;
         text+="    累计充电次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=report->totalChargingTime;
-        text+="    累计充电时长："+QString::number(chargingtime)+"\n";
+        text+="    累计充电时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=report->totalChargingCapacity;
         text+="    累计充电量："+QString::number(chargingcapacity)+"\n";
         double chargingfee=report->totalChargingFee;
@@ -456,7 +453,7 @@ void MainWindow::on_GetReport_clicked()
         int chargingnumber=report->totalChargingNumber;
         text+="    累计充电次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=report->totalChargingTime;
-        text+="    累计充电时长："+QString::number(chargingtime)+"\n";
+        text+="    累计充电时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=report->totalChargingCapacity;
         text+="    累计充电量："+QString::number(chargingcapacity)+"\n";
         double chargingfee=report->totalChargingFee;
@@ -509,4 +506,19 @@ void MainWindow::allButtonOn()
     ui->GetInfo->setEnabled(true);
     ui->GetAllInfo->setEnabled(true);
     ui->GetReport->setEnabled(true);
+}
+QString MainWindow::timetran(int s)
+{
+    //将秒数转化为时分秒格式
+    int H = s / (60*60);
+    int M = (s- (H * 60 * 60)) / 60;
+    int S = (s - (H * 60 * 60)) - M * 60;
+    QString hour = QString::number(H);
+    if (hour.length() == 1) hour = "0" + hour;
+    QString min = QString::number(M);
+    if (min.length() == 1) min = "0" + min;
+    QString sec = QString::number(S);
+    if (sec.length() == 1) sec = "0" + sec;
+    QString qTime = hour + ":" + min + ":" + sec;
+    return qTime;
 }
