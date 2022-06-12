@@ -133,8 +133,12 @@ string Pile::select(int mode)
                 ReleaseMutex(wMutex);
             }
         }
-        string k((char *)(&v), v.size()*sizeof(Request));
-        s+=(k+"\t");
+        for(int i=0;i<v.size();i++){
+            Request r=v[i];
+            string k((char *)(&r), sizeof(Request));
+            s+=k;
+        }
+        s+="\t";
     }else{
         s="no/mode error\t";
     }
