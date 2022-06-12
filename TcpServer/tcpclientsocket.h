@@ -15,7 +15,7 @@ protected slots:
 signals:
     void showserver(QString,QHostAddress,int,bool);//用来告诉tcpserver需要跟新界面的显示
     void clientdisconnected(int); //告诉server有客户端断开连接
-    void sendserver(QString,int);
+    void sendserver(QByteArray,QString,int);//QByteArray是原数据，Qstring是其转换成字符串后
 };
 
 #endif // TCPCLIENTSOCKET_H
