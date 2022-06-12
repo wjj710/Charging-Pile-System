@@ -34,7 +34,7 @@ void Server::slotshow(QString msg, QHostAddress addr,int port,bool send)
     emit showserver(msg,addr,port,send);
 }
 
-void Server::slotsend(QString msg,int descriptor){
+void Server::slotsend(QByteArray pre_msg, QString msg,int descriptor){
 
     QStringList msgList = msg.split("/");
     msgList.append(QString::number(descriptor));
