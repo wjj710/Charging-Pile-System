@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "pileinfo.h"
 #include <unistd.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -143,14 +145,14 @@ void MainWindow::on_AllOn_clicked()
     msg.chop(1);
     qDebug()<<msg;
     QStringList list = msg.split("/");
-    if(list[0]=="yes")
+    /*if(list[0]=="yes")
     {
         QMessageBox::information(this, tr("提示"),  tr("开启全部充电桩成功！"));
     }
     else
     {
         QMessageBox::critical(this, tr("出错"),  tr("开启全部充电桩失败！\n原因：%1").arg(list[1]));
-    }
+    }*/
 }
 void MainWindow::on_AllOff_clicked()
 {
@@ -164,7 +166,7 @@ void MainWindow::on_AllOff_clicked()
     QString msg = socket->readAll();
     msg.chop(1);
     qDebug()<<msg;
-    QStringList list = msg.split("/");
+   /* QStringList list = msg.split("/");
     if(list[0]=="yes")
     {
         QMessageBox::information(this, tr("提示"),  tr("关闭全部充电桩成功！"));
@@ -172,10 +174,11 @@ void MainWindow::on_AllOff_clicked()
     else
     {
         QMessageBox::critical(this, tr("出错"),  tr("关闭全部充电桩失败！\n原因：%1").arg(list[1]));
-    }
+    }*/
 }
 void MainWindow::on_GetState_clicked()
 {
+    ui->State->clear();
     QString message="getPileInfo/";
     QString pileNo=QString::number(ui->infoNo->value());
     QString mode;
@@ -184,11 +187,29 @@ void MainWindow::on_GetState_clicked()
     else
         mode="T";
     message=message+mode+pileNo+"\t";
+    QString text = "充电桩："+mode+pileNo+"\n";
     socket->write(message.toLatin1());
     socket->flush();
     allButtonOff();
     loop.exec();
-    QString msg = socket->readAll();
+    QByteArray msg = socket->readAll();
+    qDebug()<<msg;
+    PileInfo* pileinfo=reinterpret_cast<PileInfo *>(msg.data());
+    qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
+    int state=pileinfo->workingState;
+    if(state==0)
+        text+="    充电桩状态：开启\n";
+    else if(state==1)
+        text+="    充电桩状态：关闭\n";
+    else  text+="    充电桩状态：故障\n";
+    int chargingnumber=pileinfo->totalChargingNumber;
+    text+="    充电总次数："+QString::number(chargingnumber)+"\n";
+    time_t chargingtime=pileinfo->totalChargingTime;
+    text+="    充电总时长："+QString::number(chargingtime)+"\n";
+    double chargingcapacity=pileinfo->totalChargingCapacity;
+    text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
+    ui->State->setText(text);
+    /*QString msg = socket->readAll();
     msg.chop(1);
     qDebug()<<msg;
     QStringList list = msg.split("/");
@@ -199,98 +220,253 @@ void MainWindow::on_GetState_clicked()
     else
     {
         QMessageBox::critical(this, tr("出错"),  tr("获取充电桩状态失败！\n原因：%1").arg(list[1]));
-    }
+    }*/
 }
 void MainWindow::on_GetAllState_clicked()
 {
-    QString message="getPileInfo/";
-    QString pileNo=QString::number(0);
-    message=message+pileNo+"\t";
-    socket->write(message.toLatin1());
-    socket->flush();
-    allButtonOff();
-    loop.exec();
-    QString msg = socket->readAll();
-    msg.chop(1);
-    qDebug()<<msg;
-    QStringList list = msg.split("/");
-    if(list[0]=="yes")
+    ui->State->clear();
+    QString text="";
+    for(int i=1; i<=FastCharingPileNum; i++)
     {
-        ui->State->setText(list[1]);
+        QString message="getPileInfo/";
+        QString pileNo=QString::number(i);
+        QString mode;
+        mode="F";
+        message=message+mode+pileNo+"\t";
+        text += "充电桩："+mode+pileNo+"\n";
+        socket->write(message.toLatin1());
+        socket->flush();
+        allButtonOff();
+        loop.exec();
+        QByteArray msg = socket->readAll();
+        qDebug()<<msg;
+        PileInfo* pileinfo=reinterpret_cast<PileInfo *>(msg.data());
+        qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
+        int state=pileinfo->workingState;
+        if(state==0)
+            text+="    充电桩状态：开启\n";
+        else if(state==1)
+            text+="    充电桩状态：关闭\n";
+        else  text+="    充电桩状态：故障\n";
+        int chargingnumber=pileinfo->totalChargingNumber;
+        text+="    充电总次数："+QString::number(chargingnumber)+"\n";
+        time_t chargingtime=pileinfo->totalChargingTime;
+        text+="    充电总时长："+QString::number(chargingtime)+"\n";
+        double chargingcapacity=pileinfo->totalChargingCapacity;
+        text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     }
-    else
+    for(int i=1; i<=TrickleChargingPileNum; i++)
     {
-        QMessageBox::critical(this, tr("出错"),  tr("获取全部充电桩状态失败！\n原因：%1").arg(list[1]));
+        QString message="getPileInfo/";
+        QString pileNo=QString::number(i);
+        QString mode;
+        mode="T";
+        message=message+mode+pileNo+"\t";
+        text += "充电桩："+mode+pileNo+"\n";
+        socket->write(message.toLatin1());
+        socket->flush();
+        allButtonOff();
+        loop.exec();
+        QByteArray msg = socket->readAll();
+        qDebug()<<msg;
+        PileInfo* pileinfo=reinterpret_cast<PileInfo *>(msg.data());
+        qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
+        int state=pileinfo->workingState;
+        if(state==0)
+            text+="    充电桩状态：开启\n";
+        else if(state==1)
+            text+="    充电桩状态：关闭\n";
+        else  text+="    充电桩状态：故障\n";
+        int chargingnumber=pileinfo->totalChargingNumber;
+        text+="    充电总次数："+QString::number(chargingnumber)+"\n";
+        time_t chargingtime=pileinfo->totalChargingTime;
+        text+="    充电总时长："+QString::number(chargingtime)+"\n";
+        double chargingcapacity=pileinfo->totalChargingCapacity;
+        text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     }
+    ui->State->setText(text);
 }
 void MainWindow::on_GetInfo_clicked()
 {
+    ui->Info->clear();
     QString message="getCarInfo/";
-    QString pileNo=QString::number(ui->CarNo->value());
+    QString pileNo=QString::number(ui->infoNo->value());
     QString mode;
     if(btnGroup2->checkedId() == 0)
         mode="F";
     else
         mode="T";
     message=message+mode+pileNo+"\t";
+    QString text = "充电桩："+mode+pileNo+"\n";
     socket->write(message.toLatin1());
     socket->flush();
     allButtonOff();
     loop.exec();
-    QString msg = socket->readAll();
-    msg.chop(1);
+    QByteArray msg = socket->readAll();
     qDebug()<<msg;
-    QStringList list = msg.split("/");
-    if(list[0]=="yes")
+    msg=msg.remove(0, 4);
+    qDebug()<<msg;
+    int usernum=msg.size()/sizeof (CarInfo);
+    QByteArray carinfo;
+    for(int i=0;i<usernum;i++)
     {
-        ui->Info->setText(list[1]);
+        carinfo=msg.left(sizeof(CarInfo));
+        msg.remove(0, sizeof(CarInfo));
+        CarInfo* c=reinterpret_cast<CarInfo *>(carinfo.data());
+        char ownID[8];
+        strcpy(ownID, c->ownerID);
+        std::string ownid=ownID;
+        text+="    用户ID："+QString::fromStdString(ownID)+"\n";
+        double batterycapacity=c->batteryCapacity;
+        text+="    电池容量："+QString::number(batterycapacity)+"\n";
+        double request=c->requestChargingCapacity;
+        text+="    请求充电点量："+QString::number(request)+"\n";
+        time_t time=c->queueTime;
+        text+="    排队时长："+QString::number(time)+"\n";
     }
-    else
-    {
-        QMessageBox::critical(this, tr("出错"),  tr("获取等候车辆信息失败！\n原因：%1").arg(list[1]));
-    }
+    ui->Info->setText(text);
 }
 void MainWindow::on_GetAllInfo_clicked()
 {
-    QString message="getCarInfo/";
-    QString pileNo=QString::number(0);
-    message=message+pileNo+"\t";
-    socket->write(message.toLatin1());
-    socket->flush();
-    allButtonOff();
-    loop.exec();
-    QString msg = socket->readAll();
-    msg.chop(1);
-    qDebug()<<msg;
-    QStringList list = msg.split("/");
-    if(list[0]=="yes")
+    ui->Info->clear();
+    QString text="";
+    for(int i=1; i<=FastCharingPileNum; i++)
     {
-        ui->Info->setText(list[1]);
+        QString message="getCarInfo/";
+        QString pileNo=QString::number(i);
+        QString mode;
+        mode="F";
+        message=message+mode+pileNo+"\t";
+        text += "充电桩："+mode+pileNo+"\n";
+        socket->write(message.toLatin1());
+        socket->flush();
+        allButtonOff();
+        loop.exec();
+        QByteArray msg = socket->readAll();
+        msg=msg.remove(0, 4);
+        qDebug()<<msg;
+        int usernum=msg.size()/sizeof (CarInfo);
+        QByteArray carinfo;
+        for(int j=0;j<usernum;j++)
+        {
+            carinfo=msg.left(sizeof(CarInfo));
+            msg.remove(0, sizeof(CarInfo));
+            CarInfo* c=reinterpret_cast<CarInfo *>(carinfo.data());
+            char ownID[8];
+            strcpy(ownID, c->ownerID);
+            std::string ownid=ownID;
+            text+="    用户ID："+QString::fromStdString(ownID)+"\n";
+            double batterycapacity=c->batteryCapacity;
+            text+="    电池容量："+QString::number(batterycapacity)+"\n";
+            double request=c->requestChargingCapacity;
+            text+="    请求充电点量："+QString::number(request)+"\n";
+            time_t time=c->queueTime;
+            text+="    排队时长："+QString::number(time)+"\n";
+        }
     }
-    else
+    for(int i=1; i<=TrickleChargingPileNum; i++)
     {
-        QMessageBox::critical(this, tr("出错"),  tr("获取全部等候车辆信息失败！\n原因：%1").arg(list[1]));
+        QString message="getCarInfo/";
+        QString pileNo=QString::number(i);
+        QString mode;
+        mode="T";
+        message=message+mode+pileNo+"\t";
+        text += "充电桩："+mode+pileNo+"\n";
+        socket->write(message.toLatin1());
+        socket->flush();
+        allButtonOff();
+        loop.exec();
+        QByteArray msg = socket->readAll();
+        msg=msg.remove(0, 4);
+        qDebug()<<msg;
+        int usernum=msg.size()/sizeof (CarInfo);
+        QByteArray carinfo;
+        for(int j=0;j<usernum;j++)
+        {
+            carinfo=msg.left(sizeof(CarInfo));
+            msg.remove(0, sizeof(CarInfo));
+            CarInfo* c=reinterpret_cast<CarInfo *>(carinfo.data());
+            char ownID[8];
+            strcpy(ownID, c->ownerID);
+            std::string ownid=ownID;
+            text+="    用户ID："+QString::fromStdString(ownID)+"\n";
+            double batterycapacity=c->batteryCapacity;
+            text+="    电池容量："+QString::number(batterycapacity)+"\n";
+            double request=c->requestChargingCapacity;
+            text+="    请求充电点量："+QString::number(request)+"\n";
+            time_t time=c->queueTime;
+            text+="    排队时长："+QString::number(time)+"\n";
+        }
     }
+    ui->Info->setText(text);
 }
 void MainWindow::on_GetReport_clicked()
 {
-    QString message="getReport/0\t";
-    socket->write(message.toLatin1());
-    socket->flush();
-    allButtonOff();
-    loop.exec();
-    QString msg = socket->readAll();
-    msg.chop(1);
-    qDebug()<<msg;
-    QStringList list = msg.split("/");
-    if(list[0]=="yes")
+    ui->Report->clear();
+    QString text="";
+    for(int i=1; i<=FastCharingPileNum; i++)
     {
-        ui->Report->setText(list[1]);
+        QString message="getReport/";
+        QString pileNo=QString::number(i);
+        QString mode;
+        mode="F";
+        message=message+mode+pileNo+"\t";
+        text += "充电桩："+mode+pileNo+"\n";
+        socket->write(message.toLatin1());
+        socket->flush();
+        allButtonOff();
+        loop.exec();
+        QByteArray msg = socket->readAll();
+        qDebug()<<msg;
+        ReportInfo* report=reinterpret_cast<ReportInfo *>(msg.data());
+        char pileno[8];
+        strcpy(pileno, report->pileNo);
+        text+="    充电桩编号："+QString::fromStdString(pileno)+"\n";
+        int chargingnumber=report->totalChargingNumber;
+        text+="    累计充电次数："+QString::number(chargingnumber)+"\n";
+        time_t chargingtime=report->totalChargingTime;
+        text+="    累计充电时长："+QString::number(chargingtime)+"\n";
+        double chargingcapacity=report->totalChargingCapacity;
+        text+="    累计充电量："+QString::number(chargingcapacity)+"\n";
+        double chargingfee=report->totalChargingFee;
+        text+="    累计充电费用："+QString::number(chargingfee)+"\n";
+        double servicefee=report->totalServiceFee;
+        text+="    累计服务费用："+QString::number(servicefee)+"\n";
+        double allfee=report->totalAllFee;
+        text+="    累计总费用："+QString::number(allfee)+"\n";
     }
-    else
+    for(int i=1; i<=TrickleChargingPileNum; i++)
     {
-        QMessageBox::critical(this, tr("出错"),  tr("获取报表失败！\n原因：%1").arg(list[1]));
+        QString message="getReport/";
+        QString pileNo=QString::number(i);
+        QString mode;
+        mode="T";
+        message=message+mode+pileNo+"\t";
+        text += "充电桩："+mode+pileNo+"\n";
+        socket->write(message.toLatin1());
+        socket->flush();
+        allButtonOff();
+        loop.exec();
+        QByteArray msg = socket->readAll();
+        qDebug()<<msg;
+        ReportInfo* report=reinterpret_cast<ReportInfo *>(msg.data());
+        char pileno[8];
+        strcpy(pileno, report->pileNo);
+        text+="    充电桩编号："+QString::fromStdString(pileno)+"\n";
+        int chargingnumber=report->totalChargingNumber;
+        text+="    累计充电次数："+QString::number(chargingnumber)+"\n";
+        time_t chargingtime=report->totalChargingTime;
+        text+="    累计充电时长："+QString::number(chargingtime)+"\n";
+        double chargingcapacity=report->totalChargingCapacity;
+        text+="    累计充电量："+QString::number(chargingcapacity)+"\n";
+        double chargingfee=report->totalChargingFee;
+        text+="    累计充电费用："+QString::number(chargingfee)+"\n";
+        double servicefee=report->totalServiceFee;
+        text+="    累计服务费用："+QString::number(servicefee)+"\n";
+        double allfee=report->totalAllFee;
+        text+="    累计总费用："+QString::number(allfee)+"\n";
     }
+    ui->Report->setText(text);
 }
 void MainWindow::socket_Read_Data()
 {

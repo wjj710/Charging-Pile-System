@@ -25,6 +25,7 @@ public:
     static std::map<int,std::string> mint2Str; //与上面的map功能相反
     static QList<QStringList> handleList; //处理队列
     static QStringList buffer;  //存放充电桩给服务器的返回消息
+    static QList<QByteArray> bytebuffer;//存放充电桩返回消息，保留原格式
     static QList<TcpClientSocket*> tcpclientsocketlist; //服务器中的socket队列
     static int waitingAreaSize; //等候区大小
     static int chargingQueueLen; //充电桩队列长度

@@ -15,13 +15,15 @@ void TcpClientSocket::receivedata()
 {
     QByteArray array = readAll();
     qDebug()<<"receive bytearray"<<array<<Qt::endl;
+    QList<QByteArray> arrayList = array.split('\t'); //分解各个报文
     QString msg = array;
     QStringList msgList = msg.split("\t"); //分解各个报文
     for(int i=0; i<msgList.size(); i++){
         QString ans=msgList.at(i);
+        QByteArray pre_ans=arrayList.at(i);
         if(ans.length()!=0){
             emit showserver(ans, peerAddress(), peerPort(),0);// 从客户端接受，末尾设为0
-            emit sendserver(ans,this->socketDescriptor()); //将报文发送给服务器
+            emit sendserver(pre_ans,ans,this->socketDescriptor()); //将报文发送给服务器
         }
     }
 }
