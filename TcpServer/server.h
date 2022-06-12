@@ -15,7 +15,7 @@ protected:
 protected slots:
     void slotshow(QString, QHostAddress,int,bool);//用来处理tcpclient发过来的信号
     void slotclientdisconnect(int); //用来处理客户端断开连接
-    void slotsend(QString,int); //用来处理tcpsocket发来的报文，并把请求加入处理队列
+    void slotsend(QByteArray,QString,int); //用来处理tcpsocket发来的报文，并把请求加入处理队列
 public slots:
     void init(int fastPileNum, int tricklePileNum, int waitingSize, int chargingQueueLen);
 signals:
