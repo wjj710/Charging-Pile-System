@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<<<<<<< HEAD
-<!-- Written by QtCreator 7.0.2, 2022-06-11T15:51:01. -->
-=======
-<<<<<<< Updated upstream
-<!-- Written by QtCreator 7.0.2, 2022-06-11T15:20:39. -->
-=======
-<!-- Written by QtCreator 4.11.1, 2022-06-11T15:24:03. -->
->>>>>>> Stashed changes
->>>>>>> 1ed9428dd7991cbeb59d32e66928f14a070f424a
+<!-- Written by QtCreator 7.0.2, 2022-06-12T08:00:05. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -245,23 +237,6 @@
     <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
     <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
     <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
-    <valuelist type="QVariantList" key="Analyzer.Valgrind.VisibleErrorKinds">
-     <value type="QString">0</value>
-     <value type="QString">1</value>
-     <value type="QString">2</value>
-     <value type="QString">3</value>
-     <value type="QString">4</value>
-     <value type="QString">5</value>
-     <value type="QString">6</value>
-     <value type="QString">7</value>
-     <value type="QString">8</value>
-     <value type="QString">9</value>
-     <value type="QString">10</value>
-     <value type="QString">11</value>
-     <value type="QString">12</value>
-     <value type="QString">13</value>
-     <value type="QString">14</value>
-    </valuelist>
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
