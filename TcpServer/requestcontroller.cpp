@@ -1,134 +1,134 @@
 #include "requestcontroller.h"
 
-/*ÕâÀïÊÇlist<request>Ïà¹Ø²Ù×÷µÄÉùÃ÷Óë¶¨Òå*/
+/*è¿™é‡Œæ˜¯list<request>ç›¸å…³æ“ä½œçš„å£°æ˜ä¸å®šä¹‰*/
 std::string checkList()
 {
-	//...
+    //...
 }
 //...
 
-std::string RequestController::startRequest(int mode, int capacity)//´´½¨ÇëÇó
+std::string RequestController::startRequest(int mode, int capacity)//åˆ›å»ºè¯·æ±‚
 {
-	/*3.Ìá½»³äµçÇëÇó*/
-	int number;//ĞÂµÄÅÅ¶ÓºÅ
-	/*1.1-1.2*/
-	if (isFinish() == "no\t")//isFinish()À´×Ôuser.h
-	{
-		return "no/ÓÃ»§ÈÔÓĞÎ´Íê³ÉµÄÇëÇó£¡\t";
-	}
-	/*1.3-1.4*/
-	if (checkList() == "no\t")//checkList()À´×Ôlist<request>²Ù×÷
-	{
-		return "no/ÎŞ¿ÕÏĞ³µÎ»£¡\t";
-	}
-	/*1.5*/
-	number = newQueueNum(mode);
-	/*1.6-1.8*/
-	if (add(Request(number, ownerID, mode, capacity, batteryCapacity)) == "no\t")//add(r)À´×Ôlist<request>²Ù×÷£¬ownerIDºÍbCapacityÓÉÈ«¾Ö±äÁ¿»ñÈ¡
-	{
-		return "no/Ìí¼ÓRequestÈël1Ê§°Ü\t";
-	}
-	/*1.9-1.10*/
-	if (writeQueueNum(number) == "no\t")//writeQueueNum(number)À´×Ôuser.h
-	{
-		return "no/¼ÇÂ¼ÅÅ¶ÓºÅÊ§°Ü\t";
-	}
-	/*1.11-1.12*/
-	if (changeState(waitingState) == "no\t")//changeState(state)À´×Ôuser.h
-	{
-		return "no/¸ü¸Ä×´Ì¬Ê§°Ü\t";
-	}
-	return "yes\t";
+    /*3.æäº¤å……ç”µè¯·æ±‚*/
+    int number;//æ–°çš„æ’é˜Ÿå·
+    /*1.1-1.2*/
+    if (isFinish() == "no\t")//isFinish()æ¥è‡ªuser.h
+    {
+        return "no/ç”¨æˆ·ä»æœ‰æœªå®Œæˆçš„è¯·æ±‚ï¼\t";
+    }
+    /*1.3-1.4*/
+    if (checkList() == "no\t")//checkList()æ¥è‡ªlist<request>æ“ä½œ
+    {
+        return "no/æ— ç©ºé—²è½¦ä½ï¼\t";
+    }
+    /*1.5*/
+    number = newQueueNum(mode);
+    /*1.6-1.8*/
+    if (add(Request(number, ownerID, mode, capacity, batteryCapacity)) == "no\t")//add(r)æ¥è‡ªlist<request>æ“ä½œï¼ŒownerIDå’ŒbCapacityç”±å…¨å±€å˜é‡è·å–
+    {
+        return "no/æ·»åŠ Requestå…¥l1å¤±è´¥\t";
+    }
+    /*1.9-1.10*/
+    if (writeQueueNum(number) == "no\t")//writeQueueNum(number)æ¥è‡ªuser.h
+    {
+        return "no/è®°å½•æ’é˜Ÿå·å¤±è´¥\t";
+    }
+    /*1.11-1.12*/
+    if (changeState(waitingState) == "no\t")//changeState(state)æ¥è‡ªuser.h
+    {
+        return "no/æ›´æ”¹çŠ¶æ€å¤±è´¥\t";
+    }
+    return "yes\t";
 }
 
-std::string RequestController::changeRequest(int mode, int value)//¸ü¸ÄÇëÇó
+std::string RequestController::changeRequest(int mode, int value)//æ›´æ”¹è¯·æ±‚
 {
-	/*4.ĞŞ¸Ä³äµçÇëÇó*/
-	int oldNumber;//¾É³äµçºÅ
-	/*1.1-1.2*/
-	if (isWaiting() == "no\t")//isWaiting()À´×Ôuser.h
-	{
-		return "no/ÓÃ»§²»´¦ÓÚµÈ´ıÇø\t";
-	}
-	/*1.3-1.4*/
-	oldNumber = getNumber();//getNumber()À´×Ôuser.h
-	/*mode=0*/
-	if (mode == 0)//ĞŞ¸Ä³äµçÁ¿
-	{
-		/*1.1-1.2*/
-		if (changeCapacity(oldNumber, value)=="no\t")//changeCapacity(oldNumber,value)À´×Ôlist<request>²Ù×÷
-		{
-			return "no/ĞŞ¸Ä³äµçÁ¿Ê§°Ü\t";
-		}
-	}
-	/*mode=1*/
-	else if (mode == 1)
-	{
-		/*1.1*/
-		int newNumber = newQueueNum(cMode);//cModeÊÇ¸ü¸ÄºóµÄ³äµçÄ£Ê½£¬´ÓÈ«¾Ö±äÁ¿»ñÈ¡
-		/*1.2-1.3*/
-		if (deleteNum(oldNumber) == "no\t")//deleteNum(number)À´×Ôlist<request>²Ù×÷
-		{
-			return "no/¾ÉÇëÇóÉ¾³ıÊ§°Ü\t";
-		}
-		/*1.4-1.5*/
-		if (addNum(newNumber) == "no\t")//addNum(newNumber)À´×Ôlist<request>²Ù×÷
-		{
-			return "no/ĞÂÇëÇóÌí¼ÓÊ§°Ü\t";
-		}
-		/*1.6-1.7*/
-		if (writeQueueNum(newNumber) == "no\t")//writeQueueNum(number)À´×Ôuser.h
-		{
-			return "no/¼ÇÂ¼ÅÅ¶ÓºÅÊ§°Ü\t";
-		}
-	}
-	return "yes\t";
+    /*4.ä¿®æ”¹å……ç”µè¯·æ±‚*/
+    int oldNumber;//æ—§å……ç”µå·
+    /*1.1-1.2*/
+    if (isWaiting() == "no\t")//isWaiting()æ¥è‡ªuser.h
+    {
+        return "no/ç”¨æˆ·ä¸å¤„äºç­‰å¾…åŒº\t";
+    }
+    /*1.3-1.4*/
+    oldNumber = getNumber();//getNumber()æ¥è‡ªuser.h
+    /*mode=0*/
+    if (mode == 0)//ä¿®æ”¹å……ç”µé‡
+    {
+        /*1.1-1.2*/
+        if (changeCapacity(oldNumber, value) == "no\t")//changeCapacity(oldNumber,value)æ¥è‡ªlist<request>æ“ä½œ
+        {
+            return "no/ä¿®æ”¹å……ç”µé‡å¤±è´¥\t";
+        }
+    }
+    /*mode=1*/
+    else if (mode == 1)
+    {
+        /*1.1*/
+        int newNumber = newQueueNum(cMode);//cModeæ˜¯æ›´æ”¹åçš„å……ç”µæ¨¡å¼ï¼Œä»å…¨å±€å˜é‡è·å–
+        /*1.2-1.3*/
+        if (deleteNum(oldNumber) == "no\t")//deleteNum(number)æ¥è‡ªlist<request>æ“ä½œ
+        {
+            return "no/æ—§è¯·æ±‚åˆ é™¤å¤±è´¥\t";
+        }
+        /*1.4-1.5*/
+        if (addNum(newNumber) == "no\t")//addNum(newNumber)æ¥è‡ªlist<request>æ“ä½œ
+        {
+            return "no/æ–°è¯·æ±‚æ·»åŠ å¤±è´¥\t";
+        }
+        /*1.6-1.7*/
+        if (writeQueueNum(newNumber) == "no\t")//writeQueueNum(number)æ¥è‡ªuser.h
+        {
+            return "no/è®°å½•æ’é˜Ÿå·å¤±è´¥\t";
+        }
+    }
+    return "yes\t";
 }
 
-std::string RequestController::endRequest()//½áÊøÇëÇó
+std::string RequestController::endRequest()//ç»“æŸè¯·æ±‚
 {
-	/*5.½áÊø³äµç*/
-	Request r;//rÎªrequest¶ÔÏó£¬ºóÃæ¿ÉÄÜÓÃµ½
-	/*1.1-1.2*/
-	if (isFinish() == "no\t")//isFinish()À´×Ôuser.h
-	{
-		return "no/ÓÃ»§ÈÔÓĞÎ´Íê³ÉµÄÇëÇó£¡\t";
-	}
-	/*1.3-1.4*/
-	int state = isWaiting();//isWaiting()À´×Ôuser.h
-	/*1.5-1.6*/
-	int number = getNumber();//getNumber()À´×Ôuser.h
-	/*state=1£¬ÔÚµÈ´ıÇø*/
-	if (state == 1)
-	{
-		/*1.1-1.2*/
-		if (deleteNum(number) == "no\t")//deleteNum(number)À´×Ôlist<request>²Ù×÷
-		{
-			return "no/¾ÉÇëÇóÉ¾³ıÊ§°Ü\t";
-		}
-	}
-	/*state=0£¬²»ÔÚµÈ´ıÇø*/
-	else if (state == 0)
-	{
-		/*1.1-1.2*/
-		int pileNo = getPileNo();//getPileNo()À´×Ôuser.h
-		/*1.3-1.4*/
-		r = removeFromPileList(pileNo, ownerID);//removeFromPileList(pileNo, ownerID)À´×Ôpile.h£¬ownerIDÀ´×ÔÈ«¾Ö±äÁ¿£¬·µ»ØÒ»¸öRequest¶ÔÏó¸³¸ør
-	}
-	/*1.7-1.8*/
-	if (add(r) == "no\t")//add(r)À´×Ôlist<request>²Ù×÷
-	{
-		return "no/Ìí¼ÓRequestÈël1Ê§°Ü\t";
-	}
-	/*1.9-1.10*/
-	if (changeState(finishState) == "no\t")
-	{
-		return "no/¸ü¸Ä×´Ì¬Ê§°Ü\t";
-	}
-	return "yes\t";
+    /*5.ç»“æŸå……ç”µ*/
+    Request r;//rä¸ºrequestå¯¹è±¡ï¼Œåé¢å¯èƒ½ç”¨åˆ°
+    /*1.1-1.2*/
+    if (isFinish() == "no\t")//isFinish()æ¥è‡ªuser.h
+    {
+        return "no/ç”¨æˆ·ä»æœ‰æœªå®Œæˆçš„è¯·æ±‚ï¼\t";
+    }
+    /*1.3-1.4*/
+    int state = isWaiting();//isWaiting()æ¥è‡ªuser.h
+    /*1.5-1.6*/
+    int number = getNumber();//getNumber()æ¥è‡ªuser.h
+    /*state=1ï¼Œåœ¨ç­‰å¾…åŒº*/
+    if (state == 1)
+    {
+        /*1.1-1.2*/
+        if (deleteNum(number) == "no\t")//deleteNum(number)æ¥è‡ªlist<request>æ“ä½œ
+        {
+            return "no/æ—§è¯·æ±‚åˆ é™¤å¤±è´¥\t";
+        }
+    }
+    /*state=0ï¼Œä¸åœ¨ç­‰å¾…åŒº*/
+    else if (state == 0)
+    {
+        /*1.1-1.2*/
+        int pileNo = getPileNo();//getPileNo()æ¥è‡ªuser.h
+        /*1.3-1.4*/
+        r = removeFromPileList(pileNo, ownerID);//removeFromPileList(pileNo, ownerID)æ¥è‡ªpile.hï¼ŒownerIDæ¥è‡ªå…¨å±€å˜é‡ï¼Œè¿”å›ä¸€ä¸ªRequestå¯¹è±¡èµ‹ç»™r
+    }
+    /*1.7-1.8*/
+    if (add(r) == "no\t")//add(r)æ¥è‡ªlist<request>æ“ä½œ
+    {
+        return "no/æ·»åŠ Requestå…¥l1å¤±è´¥\t";
+    }
+    /*1.9-1.10*/
+    if (changeState(finishState) == "no\t")
+    {
+        return "no/æ›´æ”¹çŠ¶æ€å¤±è´¥\t";
+    }
+    return "yes\t";
 }
 
-int RequestController::newQueueNum(int mode);//·ÖÅäĞÂµÄÅÅ¶ÓºÅ
+int RequestController::newQueueNum(int mode);//åˆ†é…æ–°çš„æ’é˜Ÿå·
 {
-	return getNewNum(mode);//getNewNum(mode)·µ»ØĞÂÅÅ¶ÓºÅ£¬À´×Ôlist<request>
+    return getNewNum(mode);//getNewNum(mode)è¿”å›æ–°æ’é˜Ÿå·ï¼Œæ¥è‡ªlist<request>
 }

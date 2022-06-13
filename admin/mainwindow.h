@@ -47,5 +47,6 @@ public:
     int WaitingAreaSize=0;
     int ChargingQueueLen=0;
     int allOver=1;//当前页面是否关闭，如果关闭，所有操作将不再进行
+    QString timetran(int s);
 };
 #endif // MAINWINDOW_H
