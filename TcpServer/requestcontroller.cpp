@@ -102,7 +102,15 @@ QString RequestController::startRequest(User user,int mode, int capacity)//创�
     /*1.5*/
     number = newQueueNum(mode);
     /*1.6-1.8*/
-    add(Request(number, user.getID(), mode, capacity),1);
+    char userID[8];
+    for(int i=0;i<8;i++)
+    {
+        userID[i]= user.getID().at(i).unicode();
+    }
+    struct Request temp={
+        number, {userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, mode, (double)capacity,0,0,0,0,0,0,0
+    };
+    add(temp,1);
     /*1.9-1.10*/
     user.writeQueueNum(QString::number(number));//writeQueueNum(number)来自user.h
     user.writeMode(mode);//writeMode(mode)来自user.h
@@ -138,7 +146,15 @@ QString RequestController::changeRequest(User user,int mode, int value)//更改�
         /*1.2-1.3*/
         Request r=deleteRequest(oldNumber,oldMode);//deleteNum(number,mode)来自list<request>操作
         /*1.4-1.5*/
-        add(Request(newNumber, user.getID(), value, r.requestChargingCapacity),1);
+        char userID[8];
+        for(int i=0;i<8;i++)
+        {
+            userID[i]= user.getID().at(i).unicode();
+        }
+        struct Request temp={
+            newNumber, {userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, value, (double)r.requestChargingCapacity,0,0,0,0,0,0,0
+        };
+        add(temp,1);
         /*1.6-1.7*/
         user.writeQueueNum(QString::number(newNumber));
         user.writeMode(value);

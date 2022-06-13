@@ -4,7 +4,7 @@
 #include<QString>
 //using namespace std;
 
-class Request
+/*class Request
 {
 public:
       int queueNum;             //排队号
@@ -30,9 +30,9 @@ public:
          chargingMode=cMode;
          requestChargingCapacity=rChargingCapacity;
      }
-};
+};*/
 
-/*struct Request
+struct Request
 {
         int queueNum;             //排队号
         char ownerID[8];           //发出请求的用户id
@@ -50,6 +50,6 @@ public:
         double serviceFee;        //服务费用
         //生成详单时用chargingFee加上serviceFee可以得到总费用
 
-};*/
+};
 
 #endif // REQUEST_H
