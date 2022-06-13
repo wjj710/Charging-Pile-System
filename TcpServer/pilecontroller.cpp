@@ -18,7 +18,7 @@
 //}
 
 Request PileController::call(QString pileNo) { // 为指定pileNo返回一个Request
-    return {1, "test", 0, 1, 1,0,0,0,0,0,0};  // FIXME: 冒烟测试专用
+    //return {1, "test", 0, 1, 1,0,0,0,0,0,0};  // FIXME: 冒烟测试专用
     for(QList<Request>::iterator it = Global::l_priority.begin(); it != Global::l_priority.end(); ++it) {
         if((it->chargingMode == 0 && pileNo[0] == 'T') || (it->chargingMode == 1 && pileNo[0] == 'F')) {
             Request ret = *it;
