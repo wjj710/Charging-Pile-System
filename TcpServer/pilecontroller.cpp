@@ -8,56 +8,115 @@
 #include "request.h"
 #include <QString>
 #include <QList>
+#include <queue>
+#include <vector>
+#include "querycontroller.h"
 
-//void PileController::turnOnPile(int pileSocket) {
-//    return;
-//}
+void PileController::call(std::string pileNo) {
+    try {
+        Request req = getRequest(pileNo);
+        std::string req_str((char *)(&req), sizeof(req));
+        std::string ret = "insertIntoPileList/" + req_str + "\t";
+        sendMsg(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
+        sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
+        QueryController::getUserByID(QString::fromStdString(req.ownerID)).changeState("charging");
+    } catch (...) {
+        Global::m_queue[pileNo]++;
+    }
+}
 
-//void PileController::turnOffPile(int pileSocket) {
-//    return;
-//}
-
-Request PileController::call(QString pileNo) { // 为指定pileNo返回一个Request
-    //return {1, "test", 0, 1, 1,0,0,0,0,0,0};  // FIXME: 冒烟测试专用
+Request PileController::getRequest(std::string pileNo) {
     for(QList<Request>::iterator it = Global::l_priority.begin(); it != Global::l_priority.end(); ++it) {
-        if((it->chargingMode == 0 && pileNo[0] == 'T') || (it->chargingMode == 1 && pileNo[0] == 'F')) {
+        if(it->chargingMode == (pileNo[0] == 'F')) {
             Request ret = *it;
-            Global::l1.erase(it);
+            Global::l_priority.erase(it);
             return ret;
         }
     }
     for(QList<Request>::iterator it = Global::l1.begin(); it != Global::l1.end(); ++it) {
-        if((it->chargingMode == 0 && pileNo[0] == 'T') || (it->chargingMode == 1 && pileNo[0] == 'F')) {
+        if(it->chargingMode == (pileNo[0] == 'F')) {
             Request ret = *it;
             Global::l1.erase(it);
             return ret;
         }
     }
-    throw "No Available Request for Pile " + pileNo.toStdString();
+    throw "No Available Request.";
 }
 
-void PileController::malfunction(QString pileNo, int mode) {
+bool PileController::cmpRequest(Request x, Request y) {
+    return x.requestTime < y.requestTime;
+}
+
+void PileController::malfunction(std::string pileNo, int mode) {
     scheduleMode = mode;
     if(mode==1) {
-
-    } else if(mode==2) {
+        QList<Request> reqs = getAllRequestFromPile(pileNo);
+        for(const auto &req : reqs) {
+            handleNewRequest(req, Global::l_priority);
+        }
+    }
+    if(mode==2) {
+        QList<Request> l_req; // TODO: Sorting
+        for(const auto &it: Global::lp) {
+            if(Global::m_on[it]) {
+                QList<Request> reqs = getAllRequestFromPile(it);
+                for(const auto &req : reqs) {
+                    Global::m_queue[it]++;
+                    l_req.append(req);
+                }
+            }
+        }
+        std::sort(l_req.begin(), l_req.end(), cmpRequest);
+        for(const auto &req : l_req) {
+            handleNewRequest(req, Global::l_priority);
+        }
 
     }
     return;
 }
 
-//int PileController::getScheduleMode() {
-//    return scheduleMode;
-//}
+QList<Request> PileController::getAllRequestFromPile(std::string pileNo) {
+    // TODO: Communicate
+    return QList<Request>();
+}
 
-//void PileController::changeScheduleMode(int newMode) {
-//    return;
-//}
+// Handle New Request.
+void PileController::handleNewRequest(Request req, QList<Request> & fallback_list) {
+    std::string pileNo = getIdlePile(req.chargingMode);
+    if(pileNo!="") {
+        std::string req_str((char *)(&req), sizeof(req));
+        std::string ret = "insertIntoPileList/" + req_str + "\t";
+        sendMsg(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
+    }
+    else {
+        fallback_list.append(req);
+    }
+}
 
-//void PileController::schedule() {
-//    return;
-//}
+// Get PileNo from m_queue. Return "" if Pile Not Found.
+std::string PileController::getIdlePile(int isFastCharge) {
+    int l = 0;
+    std::string ret = "";
+    for(const auto &it : Global::m_queue) {
+        if(isFastCharge==(it.first[0]=='F')&&it.second>l) {
+            ret=it.first;
+            l=it.second;
+        }
+    }
+    if(l) Global::m_queue[ret]--;
+    return ret;
+}
 
-//void PileController::reschedule() {
-//    return;
-//}
+void PileController::sendMsg(QString msg, int descriptor) {
+    for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)
+    {
+        QTcpSocket *item = Global::tcpclientsocketlist.at(i);
+        if(item->socketDescriptor() == descriptor)
+        {
+            item->write(msg.toLatin1().data(),msg.size());
+            item->flush();
+            qDebug()<<"send to pile: "<<descriptor<<msg;
+            break;
+        }
+    }
+}

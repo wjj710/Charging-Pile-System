@@ -13,8 +13,18 @@ public:
 
 //    void turnOnPile(int);             // 打开充电桩
 //    void turnOffPile(int);            // 关闭充电桩
-    Request call(QString);              // 充电桩叫号，返回值是被叫请求的用户ID，传入的参数是发出叫号请求的充电桩socket描述符
-    void malfunction(QString, int);     // 故障处理，参数为充电桩编号和调度方式
+    void call(std::string);              // 充电桩叫号，返回值是被叫请求的用户ID，传入的参数是发出叫号请求的充电桩socket描述符
+    void malfunction(std::string, int);     // 故障处理，参数为充电桩编号和调度方式
+    QList<Request> getAllRequestFromPile(std::string);
+    Request getRequest(std::string);
+    void handleNewRequest(Request, QList<Request>&);
+    std::string getIdlePile(int);
+
+    static bool cmpRequest(Request, Request);
+
+    void sendMsg(QString msg, int descriptor);
+
+
 //    int getScheduleMode();              // 获取调度模式
 //    void changeScheduleMode(int);       // 修改调度模式
 //    void schedule();                  // 调度

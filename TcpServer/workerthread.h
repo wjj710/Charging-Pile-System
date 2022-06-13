@@ -69,7 +69,7 @@ public:
                     ;
                 }else if (msgList[0]=="endRequest") {
                     ;
-                }/*else if (msgList[0]=="getQueueNum") {
+                }else if (msgList[0]=="getQueueNum") {
                     try {
                         User &tmpUsr = QueryController::getUserByID(QString::fromStdString(Global::mint2Str[descriptor]));
                         ans = "yes/" + QueryController::getQueueNum(tmpUsr) + "\t";
@@ -93,28 +93,48 @@ public:
                     } catch (const char *msg) {
                         ans = "no/" + QString::fromStdString(msg) + "\t";
                     }
-                }*/else if (msgList[0]=="turnOnPile") {
+                }else if (msgList[0]=="turnOnPile") {
                     if(msgList[1]=="0")
                         for(auto & it : Global::lp) {
+                            Global::m_on[it]=true;
                             sendMsg("turnOn\t", Global::mstr2Int[it]);
+                            Global::mutex.lock();
+                            Global::condition.wait(&Global::mutex);
+                            // qDebug()<<Global::bytebuffer[0];
+                            if(Global::bytebuffer[0]=="yes") sendMsg("yes\t", descriptor);
+                            else sendMsg("no/"+Global::bytebuffer[1]+"\t", descriptor);
+                            Global::mutex.unlock();
                         }
-                    else sendMsg("turnOn\t", Global::mstr2Int[msgList[1].toStdString()]);
-                    // pileController.turnOnPile(descriptor); TODO: 是否有充电桩返回
-                    // Global::loop.exec();
-                    // if(Global::buffer[0]=="no"){
-                    //     continue;
-                    // }
+                    else {
+                        Global::m_on[msgList[1].toStdString()]=true;
+                        sendMsg("turnOn\t", Global::mstr2Int[msgList[1].toStdString()]);
+                        Global::mutex.lock();
+                        Global::condition.wait(&Global::mutex);
+                        if(Global::bytebuffer[0]=="yes") sendMsg("yes\t", descriptor);
+                        else sendMsg("no/"+Global::bytebuffer[1]+"\t", descriptor);
+                        Global::mutex.unlock();
+                    }
                 }else if (msgList[0]=="turnOffPile") {
                     if(msgList[1]=="0")
                         for(auto & it : Global::lp) {
+                            Global::m_on[it]=false;
                             sendMsg("turnOff\t", Global::mstr2Int[it]);
+                            Global::mutex.lock();
+                            Global::condition.wait(&Global::mutex);
+                            // qDebug()<<Global::bytebuffer[0];
+                            if(Global::bytebuffer[0]=="yes") sendMsg("yes\t", descriptor);
+                            else sendMsg("no/"+Global::bytebuffer[1]+"\t", descriptor);
+                            Global::mutex.unlock();
                         }
-                    sendMsg("turnOff\t", Global::mstr2Int[msgList[1].toStdString()]);
-                    // pileController.turnOffPile(descriptor);
-                    // Global::loop.exec();
-                    // if(Global::buffer[0]=="no"){
-                    //     continue;
-                    // }
+                    else {
+                        Global::m_on[msgList[1].toStdString()]=false;
+                        sendMsg("turnOff\t", Global::mstr2Int[msgList[1].toStdString()]);
+                        Global::mutex.lock();
+                        Global::condition.wait(&Global::mutex);
+                        if(Global::bytebuffer[0]=="yes") sendMsg("yes\t", descriptor);
+                        else sendMsg("no/"+Global::bytebuffer[1]+"\t", descriptor);
+                        Global::mutex.unlock();
+                    }
                 }else if (msgList[0]=="getPileInfo") {
                     pileInfoController.generatePileInfo(msgList[1].toStdString(), descriptor);
                 }else if (msgList[0]=="getCarInfo") {
@@ -129,7 +149,7 @@ public:
                     // if(Global::buffer[0]=="no"){ //如果充电桩返回错误，则忽略此次请求
                     //     continue;
                     // }
-                    pileController.malfunction(descriptor,msgList[1].toInt());
+                    pileController.malfunction(Global::mint2Str[descriptor],msgList[1].toInt());
                 }else if (msgList[0]=="recover") { //服务器前端发来的故障恢复
                     //首先通知充电桩进程故障恢复
                     QString msg="malfunctionRecover\t";
@@ -138,27 +158,18 @@ public:
                     // if(Global::buffer[0]=="no"){ //如果充电桩返回错误，则忽略此次请求
                     //     continue;
                     // }
-                    pileController.malfunction(descriptor,2);
+                    pileController.malfunction(Global::mint2Str[descriptor],2);
                 }*/else if(msgList[0]=="call"){ //充电桩叫号
-                    qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
+                    // qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
+
                     //先检查call请求有没有带参数Request，如果有就加入l2
-//                    if(msgList.size()>1){
-//                        char *s=msgList[1].toUtf8().data();
-//                        Request r=*(Request *)s;
-//                        Global::l2.append(r);
-//                        sendMsg("chargingToFinish\t",Global::mstr2Int[r.ownerID]); //给对应的用户发异步消息通知状态变化
-//                    }
-                    try {
-                        Request req = pileController.call(QString::fromStdString(Global::mint2Str[descriptor]));
-                        req.requestChargingCapacity=40;
-                        // Global::mstr2Int[req.ownerID] = descriptor + 1; // FIXME: 冒烟测试专用
-                        // QueryController::getUserByID(QString::fromStdString(req.ownerID)).changeState(CHARGING); TODO: 与 User 类对接
-                        std::string req_str((char *)(&req), sizeof(req));
-                        ans = QString::fromStdString("insertIntoPileList/" + req_str + "\t");
-                        //sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
-                    } catch (...) {
-                        Global::l_call.append(Global::mint2Str[descriptor]); // 放入无可调度的充电桩信息
+                    if(msgList.size()>1){
+                        char *s=msgList[1].toUtf8().data();
+                        Request r=*(Request *)s;
+                        Global::l2.append(r);
+                        sendMsg("chargingToFinish\t",Global::mstr2Int[r.ownerID]); //给对应的用户发异步消息通知状态变化
                     }
+                    pileController.call(Global::mint2Str[descriptor]);
                 }else if(msgList[0]=="adminLogon"){ //管理员登录，管理员端需要在建立连接后发此消息，获取初始化信息（此消息无参数）
                     ans="yes/"+QString::number(Global::fastChargingPileNum)+"/"+QString::number(Global::trickleChargingPileNum)
                         +"/"+QString::number(Global::waitingAreaSize)+"/"+QString::number(Global::chargingQueueLen)+"\t";

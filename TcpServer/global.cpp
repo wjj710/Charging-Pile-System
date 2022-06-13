@@ -28,3 +28,6 @@ QList<QProcess *> Global::proclist; //充电桩进程队列
 QWaitCondition Global::condition;
 QMutex Global::mutex;
 QList<std::string> Global::l_call; // 存放未得到反馈的充电桩编号
+
+std::map<std::string,int> Global::m_queue;
+std::map<std::string,bool> Global::m_on;

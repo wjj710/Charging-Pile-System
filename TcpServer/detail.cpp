@@ -23,5 +23,5 @@ Detail::Detail(Request& request) {
 
 QString Detail::getPileNo(const QString& userID) {
     for(auto & it : Global::usr)
-        if(it.ID == userID) return it.pileNo;
+        if(it.getID() == userID) return it.getPileNo();
 }

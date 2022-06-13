@@ -44,6 +44,8 @@ public:
     static QWaitCondition condition;  //pileInfo的锁
     static QMutex mutex;
     static QList<std::string> l_call; // 存放未得到反馈的充电桩编号
+    static std::map<std::string,int> m_queue;
+    static std::map<std::string,bool> m_on;
 };
 
 #endif // GLOBAL_H
