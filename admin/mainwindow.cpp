@@ -108,7 +108,7 @@ void MainWindow::on_On_clicked()
 void MainWindow::on_Off_clicked()
 {
     QString message="turnOffPile/";
-    QString pileNo=QString::number(ui->OnNo->value());
+    QString pileNo=QString::number(ui->OffNo->value());
     QString mode;
     if(btnGroup1->checkedId() == 0)
         mode="F";
@@ -320,6 +320,14 @@ void MainWindow::on_GetInfo_clicked()
         text+="    请求充电量："+QString::number(request)+"\n";
         time_t time=c->queueTime;
         text+="    排队时长："+timetran(time)+"\n";
+        int queuenum=c->queueNum;
+        text+="    排队号："+QString::number(queuenum)+"\n";
+        int mode=c->chargingMode;
+        text+="    充电模式："+QString::number(mode)+"\n";
+        int alreadycapacity=c->alreadyChargingCapacity;
+        text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
+        int nowfee=c->nowFee;
+        text+="    当前费用："+QString::number(nowfee)+"\n";
     }
     ui->Info->setText(text);
 }
@@ -359,6 +367,14 @@ void MainWindow::on_GetAllInfo_clicked()
             text+="    请求充电量："+QString::number(request)+"\n";
             time_t time=c->queueTime;
             text+="    排队时长："+timetran(time)+"\n";
+            int queuenum=c->queueNum;
+            text+="    排队号："+QString::number(queuenum)+"\n";
+            int mode=c->chargingMode;
+            text+="    充电模式："+QString::number(mode)+"\n";
+            int alreadycapacity=c->alreadyChargingCapacity;
+            text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
+            int nowfee=c->nowFee;
+            text+="    当前费用："+QString::number(nowfee)+"\n";
         }
     }
     for(int i=1; i<=TrickleChargingPileNum; i++)
@@ -393,6 +409,14 @@ void MainWindow::on_GetAllInfo_clicked()
             text+="    请求充电量："+QString::number(request)+"\n";
             time_t time=c->queueTime;
             text+="    排队时长："+timetran(time)+"\n";
+            int queuenum=c->queueNum;
+            text+="    排队号："+QString::number(queuenum)+"\n";
+            int mode=c->chargingMode;
+            text+="    充电模式："+QString::number(mode)+"\n";
+            int alreadycapacity=c->alreadyChargingCapacity;
+            text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
+            int nowfee=c->nowFee;
+            text+="    当前费用："+QString::number(nowfee)+"\n";
         }
     }
     ui->Info->setText(text);
