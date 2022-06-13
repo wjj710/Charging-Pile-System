@@ -7,6 +7,7 @@ Global::Global()
 
 std::map<std::string,int> Global::mstr2Int; //用来把用户的ID和对应的socket标识符联系起来，也把充电桩的pileNo和对应的socket标识符联系起来
 std::map<int,std::string> Global::mint2Str; //与上面的map功能相反
+std::map<std::string,int> Global::mq2v;
 QList<QStringList> Global::handleList; //处理队列
 QStringList Global::buffer;  //存放充电桩给服务器的返回消息
 QList<QByteArray> Global::bytebuffer;//存放充电桩返回消息，保留原格式

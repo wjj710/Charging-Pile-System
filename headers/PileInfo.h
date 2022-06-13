@@ -16,6 +16,11 @@ struct CarInfo{
     double batteryCapacity;   //电池容量
     double requestChargingCapacity;  //请求充电电量
     time_t queueTime;         //排队时长（秒）
+    int queueNum;
+    int chargingMode;
+    //queueNum和chargingMode可以用来获取车辆编号
+    double alreadyChargingCapacity; //已充电量
+    double nowFee; //当前费用
 };
 
 //报表信息

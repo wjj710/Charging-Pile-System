@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 extern HANDLE wMutex;
+extern time_t t; //测试基准时间
+extern time_t t1; //样例基准时间（测试当天的6:00）
 
 Pile::Pile(char *argv[])
 {
@@ -100,6 +102,16 @@ string Pile::select(int mode)
             c.batteryCapacity=chargingQueue[i].batteryCapacity;
             c.requestChargingCapacity=chargingQueue[i].requestChargingCapacity;
             c.queueTime=time(0)-chargingQueue[i].requestTime;
+            c.queueNum=chargingQueue[i].queueNum;
+            c.chargingMode=chargingQueue[i].chargingMode;
+            if(i==0){
+                time_t tn=t1+(time(0)-t)*10;
+                c.alreadyChargingCapacity=(tn-chargingQueue[i].startChargingTime)*power/3600;
+                c.nowFee=calculateFee(chargingQueue[i].startChargingTime,tn)+0.8*c.alreadyChargingCapacity;
+            }else{
+                c.alreadyChargingCapacity=0;
+                c.nowFee=0;
+            }
             string k((char *)(&c), sizeof(CarInfo));
             s+=k;
         }

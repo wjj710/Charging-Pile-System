@@ -7,6 +7,8 @@
 
 Pile *p; //充电桩指针
 SOCKET sock; //通信套接字
+time_t t; //测试基准时间
+time_t t1; //样例基准时间（测试当天的6:00）
 HANDLE hMutex = CreateMutex(NULL,FALSE,NULL); //互斥锁，用来保证两个线程对sock的互斥访问
 HANDLE wMutex = CreateMutex(NULL,FALSE,NULL); //互斥锁，用来保证两个线程对chargingQueue的互斥访问
 
@@ -26,8 +28,8 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
         for(int i=0; i<p->chargingQueue.size(); i++){
             //如果是关机或故障状态，则一直等待
             while(p->workingState); 
-            p->chargingQueue[i].startChargingTime=time(0); //记录开始充电的时间
-            UINT timesec=(p->chargingQueue[i].requestChargingCapacity)*3600/p->power; //记录充电预计秒数
+            p->chargingQueue[i].startChargingTime=t1+(time(0)-t)*10; //记录开始充电的时间
+            UINT timesec=(p->chargingQueue[i].requestChargingCapacity)*360/p->power; //记录充电预计秒数(实际的1/10)
             BOOL bRet = FALSE;
             MSG msg = {0};
             UINT timerid = SetTimer(NULL, 0, timesec*1000, NULL);
@@ -55,7 +57,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
                 }
             }
             KillTimer(NULL, timerid); //关计时器
-            p->chargingQueue[i].endChargingTime=time(0); //记录结束充电的时间
+            p->chargingQueue[i].endChargingTime=t1+(time(0)-t)*10; //记录结束充电的时间
             time_t start = p->chargingQueue[i].startChargingTime;
             time_t end = p->chargingQueue[i].endChargingTime;
             p->chargingQueue[i].chargingCapacity = (end-start)*(p->power)/3600; //记录实际充电量
@@ -182,6 +184,9 @@ int main(int argc, char *argv[])
                         p->workingState=0;
                         ret="yes\t";
                     }
+                }else if(s=="setTime"){
+                    t=*(time_t *)b;
+                    t1=t-t%(24*3600)+6*3600;
                 }else{
                     ret="no/no such request:"+to_string(i)+"\t";
                     cout<<"request error"<<endl;

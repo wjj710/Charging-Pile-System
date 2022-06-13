@@ -23,6 +23,7 @@ public:
     Global();
     static std::map<std::string,int> mstr2Int; //用来把用户的ID和对应的socket标识符联系起来，也把充电桩的pileNo和对应的socket标识符联系起来
     static std::map<int,std::string> mint2Str; //与上面的map功能相反
+    static std::map<std::string,int> mq2v; //根据排队号获取车辆号，排队号可以通过queueNum和chargingMode获取，格式如F1、T1等
     static QList<QStringList> handleList; //处理队列
     static QStringList buffer;  //存放充电桩给服务器的返回消息
     static QList<QByteArray> bytebuffer;//存放充电桩返回消息，保留原格式
