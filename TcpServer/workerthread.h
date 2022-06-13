@@ -6,6 +6,7 @@
 #include "tcpclientsocket.h"
 #include "querycontroller.h"
 #include "pilecontroller.h"
+#include "requestcontroller.h"
 #include "usercontroller.h"
 
 /* 新建一个 WorkerThread 类继承于 QThread */
@@ -36,7 +37,7 @@ public:
     PileController pileController;
     PileInfoController pileInfoController;
     //QueryController queryController;
-    //RequestController requestController;
+    RequestController requestController;
     UserController userController;
 
     WorkerThread(QWidget *parent = nullptr) {
@@ -64,11 +65,12 @@ public:
                     //ans=userController.pay(msgList[1]);
                     //详见消息格式文档
                 }else if (msgList[0]=="startRequest") {
-                    ;
+                    //因为测试时是单客户端，这里直接用usr的第一项
+                    ans=requestController.startRequest(msgList[1].toInt(),&Global::usr[0],msgList[2].toInt(),msgList[3].toDouble(),msgList[4].toDouble());
                 }else if (msgList[0]=="changeRequest") {
-                    ;
+                    ans=requestController.changeRequest(msgList[1].toInt(),&Global::usr[0],msgList[2].toInt(),msgList[3].toDouble());
                 }else if (msgList[0]=="endRequest") {
-                    ;
+                    ans=requestController.endRequest(msgList[1].toInt(),&Global::usr[0]);
                 }else if (msgList[0]=="getQueueNum") {
                     try {
                         User &tmpUsr = QueryController::getUserByID(QString::fromStdString(Global::mint2Str[descriptor]));

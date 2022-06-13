@@ -8,9 +8,9 @@
 
 class RequestController {
 public:
-    QString startRequest(User user,int mode,int capacity);       //创建请求
-    QString changeRequest(User user,int mode,int value);     //更改请求，mode=0时，value为充电量；mode=1时，value为模式（慢0快1）
-    QString endRequest(User user);      //结束请求
+    QString startRequest(int v, User *user,int mode,double capacity, double batteryCapacity);       //创建请求
+    QString changeRequest(int v, User *user,int mode,double value);     //更改请求，mode=0时，value为充电量；mode=1时，value为模式（慢0快1）
+    QString endRequest(int v, User *user);      //结束请求
     int newQueueNum(int mode);     //分配新的排队号
 };
 

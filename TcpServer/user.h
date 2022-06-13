@@ -3,6 +3,13 @@
 
 #include <QString>
 
+struct car{
+    QString state;
+    int mode;
+    int queueNum;
+    QString pileNo;
+};
+
 class User
 {
 private:
@@ -13,9 +20,10 @@ private:
     QString pileNo;     // 充电桩号
 
 public:
+    car p[30]; //最多30辆车
     User(QString usrID, QString state_) { ID = usrID; state = state_; }
-    bool isWaiting() { if (state == "waiting") return true; else return false; }
-    bool isFinish() { if (state == "finished") return true; else return false; }
+    bool isWaiting(int v) { if (p[v].state == "waiting") return true; else return false; }
+    bool isFinish(int v) { if (p[v].state == "finished") return true; else return false; }
     QString getNumber() { return queueNum; }
     QString getPileNo() { return pileNo; }
     QString getID() { return ID; }
