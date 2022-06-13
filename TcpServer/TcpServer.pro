@@ -21,6 +21,7 @@ SOURCES += \
     global.cpp \
     main.cpp \
     pileinfocontroller.cpp \
+    requestcontroller.cpp \
     report.cpp \
     #request.cpp \
     server.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     pile.h \
     pileinfo.h \
     pileinfocontroller.h \
+    requestcontroller.h \
     report.h \
     request.h \
     server.h \
