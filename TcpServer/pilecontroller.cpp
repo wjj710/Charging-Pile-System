@@ -48,17 +48,19 @@ bool PileController::cmpRequest(Request x, Request y) {
 }
 
 void PileController::malfunction(std::string pileNo, int mode) {
-    scheduleMode = mode;
+    scheduleMode = mode == 3 ? 0 : mode;
     if(mode==1) {
+        Global::m_on[pileNo] = false;
         QList<Request> reqs = getAllRequestFromPile(pileNo);
         for(const auto &req : reqs) {
             handleNewRequest(req, Global::l_priority);
         }
     }
-    if(mode==2) {
-        QList<Request> l_req; // TODO: Sorting
+    if(mode==2||mode==3) {
+        Global::m_on[pileNo] = mode==2?false:true;
+        QList<Request> l_req;
         for(const auto &it: Global::lp) {
-            if(Global::m_on[it]) {
+            if(Global::m_on[it] && it[0] == pileNo[0]) {
                 QList<Request> reqs = getAllRequestFromPile(it);
                 for(const auto &req : reqs) {
                     Global::m_queue[it]++;
@@ -70,14 +72,23 @@ void PileController::malfunction(std::string pileNo, int mode) {
         for(const auto &req : l_req) {
             handleNewRequest(req, Global::l_priority);
         }
-
     }
     return;
 }
 
 QList<Request> PileController::getAllRequestFromPile(std::string pileNo) {
-    // TODO: Communicate
-    return QList<Request>();
+    sendMsg("select/3\t",Global::mstr2Int[pileNo]);
+    Global::mutex.lock();
+    Global::condition.wait(&Global::mutex);
+    QList<Request> ret;
+    if(Global::bytebuffer[0]=="yes") {
+        for(Request *tmp=(Request *)(&Global::bytebuffer[1]); tmp<(Request *)(Global::bytebuffer[1].end()); tmp+=sizeof(Request)) {
+            Global::m_queue[pileNo]++;
+            ret.append(*tmp);
+        }
+    }
+    Global::mutex.unlock();
+    return ret;
 }
 
 // Handle New Request.
