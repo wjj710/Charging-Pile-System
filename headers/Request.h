@@ -28,6 +28,7 @@ using namespace std;
 struct Request
 {
         int queueNum;             //排队号
+        int vNum;                 //车辆号
         char ownerID[8];           //发出请求的用户id
         int chargingMode;         //充电模式，0表示慢充，1表示快充
         double requestChargingCapacity;  //请求充电电量

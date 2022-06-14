@@ -99,6 +99,7 @@ string Pile::select(int mode)
         for(int i=0; i<chargingQueue.size(); i++){
             CarInfo c;
             strcpy(c.ownerID, chargingQueue[i].ownerID);
+            c.vNum=chargingQueue[i].vNum;
             c.batteryCapacity=chargingQueue[i].batteryCapacity;
             c.requestChargingCapacity=chargingQueue[i].requestChargingCapacity;
             c.queueTime=time(0)-chargingQueue[i].requestTime;

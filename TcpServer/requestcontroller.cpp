@@ -137,7 +137,7 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
         userID[i]= user->getID().at(i).unicode();
     }
     struct Request temp={
-        number, {userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, mode, capacity,0,batteryCapacity,0,0,0,0,0
+        number, v,{userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, mode, capacity,0,batteryCapacity,0,0,0,0,0
     };
 //    add(temp,1);
 //    /*1.9-1.10*/
@@ -226,7 +226,7 @@ QString RequestController::changeRequest(int v, User *user,int mode, double valu
             userID[i]= user->getID().at(i).unicode();
         }
         struct Request temp={
-            newNumber, {userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, (int)value, r.requestChargingCapacity,0,r.batteryCapacity,0,0,0,0,0
+            newNumber,v, {userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, (int)value, r.requestChargingCapacity,0,r.batteryCapacity,0,0,0,0,0
         };
 //        add(temp,1);
 //        /*1.6-1.7*/

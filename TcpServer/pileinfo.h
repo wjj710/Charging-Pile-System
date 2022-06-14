@@ -13,6 +13,7 @@ struct PileInfo{
 //车辆信息
 struct CarInfo{
     char ownerID[8];           //发出请求的用户id
+    int vNum;                 //车辆号
     double batteryCapacity;   //电池容量
     double requestChargingCapacity;  //请求充电电量
     time_t queueTime;         //排队时长（秒）
