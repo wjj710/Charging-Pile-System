@@ -310,6 +310,8 @@ void MainWindow::on_GetInfo_clicked()
         carinfo=msg.left(sizeof(CarInfo));
         msg.remove(0, sizeof(CarInfo));
         CarInfo* c=reinterpret_cast<CarInfo *>(carinfo.data());
+        int vnum=c->Vnum;
+        text+="    *车号："+QString::number(vnum)+"\n";
         char ownID[8];
         strcpy(ownID, c->ownerID);
         std::string ownid=ownID;
@@ -323,11 +325,14 @@ void MainWindow::on_GetInfo_clicked()
         int queuenum=c->queueNum;
         text+="    排队号："+QString::number(queuenum)+"\n";
         int mode=c->chargingMode;
-        text+="    充电模式："+QString::number(mode)+"\n";
+        if(mode==0)
+            text+="    充电模式：T\n";
+        else
+            text+="    充电模式：F\n";
         int alreadycapacity=c->alreadyChargingCapacity;
-        text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
+        text+="    *已冲电量："+QString::number(alreadycapacity)+"\n";
         int nowfee=c->nowFee;
-        text+="    当前费用："+QString::number(nowfee)+"\n";
+        text+="    *当前费用："+QString::number(nowfee)+"\n";
     }
     ui->Info->setText(text);
 }
@@ -357,6 +362,8 @@ void MainWindow::on_GetAllInfo_clicked()
             carinfo=msg.left(sizeof(CarInfo));
             msg.remove(0, sizeof(CarInfo));
             CarInfo* c=reinterpret_cast<CarInfo *>(carinfo.data());
+            int vnum=c->Vnum;
+            text+="    *车号："+QString::number(vnum)+"\n";
             char ownID[8];
             strcpy(ownID, c->ownerID);
             std::string ownid=ownID;
@@ -370,11 +377,13 @@ void MainWindow::on_GetAllInfo_clicked()
             int queuenum=c->queueNum;
             text+="    排队号："+QString::number(queuenum)+"\n";
             int mode=c->chargingMode;
-            text+="    充电模式："+QString::number(mode)+"\n";
-            int alreadycapacity=c->alreadyChargingCapacity;
-            text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
+            if(mode==0)
+                text+="    充电模式：T\n";
+            else
+                text+="    充电模式：F\n";            int alreadycapacity=c->alreadyChargingCapacity;
+            text+="    *已冲电量："+QString::number(alreadycapacity)+"\n";
             int nowfee=c->nowFee;
-            text+="    当前费用："+QString::number(nowfee)+"\n";
+            text+="    *当前费用："+QString::number(nowfee)+"\n";
         }
     }
     for(int i=1; i<=TrickleChargingPileNum; i++)
@@ -399,6 +408,8 @@ void MainWindow::on_GetAllInfo_clicked()
             carinfo=msg.left(sizeof(CarInfo));
             msg.remove(0, sizeof(CarInfo));
             CarInfo* c=reinterpret_cast<CarInfo *>(carinfo.data());
+            int vnum=c->Vnum;
+            text+="    *车号："+QString::number(vnum)+"\n";
             char ownID[8];
             strcpy(ownID, c->ownerID);
             std::string ownid=ownID;
@@ -412,11 +423,14 @@ void MainWindow::on_GetAllInfo_clicked()
             int queuenum=c->queueNum;
             text+="    排队号："+QString::number(queuenum)+"\n";
             int mode=c->chargingMode;
-            text+="    充电模式："+QString::number(mode)+"\n";
+            if(mode==0)
+                text+="    充电模式：T\n";
+            else
+                text+="    充电模式：F\n";
             int alreadycapacity=c->alreadyChargingCapacity;
-            text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
+            text+="    *已冲电量："+QString::number(alreadycapacity)+"\n";
             int nowfee=c->nowFee;
-            text+="    当前费用："+QString::number(nowfee)+"\n";
+            text+="    *当前费用："+QString::number(nowfee)+"\n";
         }
     }
     ui->Info->setText(text);
@@ -489,6 +503,54 @@ void MainWindow::on_GetReport_clicked()
     }
     ui->Report->setText(text);
 }
+void MainWindow::on_GetWaiting_clicked()
+{
+    ui->waiting->clear();
+    QString message="getWaiting\t";
+    QString text = "";
+    socket->write(message.toLatin1());
+    socket->flush();
+    allButtonOff();
+    loop.exec();
+    QByteArray msg = socket->readAll();
+    qDebug()<<msg;
+    msg=msg.remove(0, 4);
+    qDebug()<<msg;
+    int usernum=msg.size()/sizeof (CarInfo);
+    QByteArray carinfo;
+    for(int i=0;i<usernum;i++)
+    {
+        carinfo=msg.left(sizeof(CarInfo));
+        msg.remove(0, sizeof(CarInfo));
+        CarInfo* c=reinterpret_cast<CarInfo *>(carinfo.data());
+        int vnum=c->Vnum;
+        text+="    *车号："+QString::number(vnum)+"\n";
+        char ownID[8];
+        strcpy(ownID, c->ownerID);
+        std::string ownid=ownID;
+        text+="    用户ID："+QString::fromStdString(ownID)+"\n";
+        double batterycapacity=c->batteryCapacity;
+        text+="    电池容量："+QString::number(batterycapacity)+"\n";
+        double request=c->requestChargingCapacity;
+        text+="    *请求充电量："+QString::number(request)+"\n";
+        time_t time=c->queueTime;
+        text+="    排队时长："+timetran(time)+"\n";
+        int queuenum=c->queueNum;
+        text+="    排队号："+QString::number(queuenum)+"\n";
+        int mode=c->chargingMode;
+        if(mode==0)
+            text+="    *充电模式：T\n";
+        else
+            text+="    *充电模式：F\n";
+        int alreadycapacity=c->alreadyChargingCapacity;
+        text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
+        int nowfee=c->nowFee;
+        text+="    当前费用："+QString::number(nowfee)+"\n";
+        text+="\n";
+    }
+    ui->waiting->setText(text);
+}
+
 void MainWindow::socket_Read_Data()
 {
     qDebug()<<"receive";
@@ -517,6 +579,7 @@ void MainWindow::allButtonOff()
     ui->GetInfo->setEnabled(false);
     ui->GetAllInfo->setEnabled(false);
     ui->GetReport->setEnabled(false);
+    ui->GetWaiting->setEnabled(false);
 }
 void MainWindow::allButtonOn()
 {
@@ -530,7 +593,9 @@ void MainWindow::allButtonOn()
     ui->GetInfo->setEnabled(true);
     ui->GetAllInfo->setEnabled(true);
     ui->GetReport->setEnabled(true);
+    ui->GetWaiting->setEnabled(true);
 }
+
 QString MainWindow::timetran(int s)
 {
     //将秒数转化为时分秒格式
