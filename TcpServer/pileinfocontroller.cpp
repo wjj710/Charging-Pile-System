@@ -95,6 +95,53 @@ void PileInfoController::getReport(std::string pileNo,int admin_socketNo)//生�
     sendArrayMsg(Global::bytebuffer[1], admin_socketNo);
     Global::mutex.unlock();
 }
+void PileInfoController::getWaiting(int admin_socketNo)//返回等候区的车辆信息，即l1和l_priority
+{
+  /*  Request r={1,"test",0,0,0,0,0,0,0,0,0};  //测试举例
+    Request rr={2,"test",1,0,0,0,0,0,0,0,0};
+    Global::l1.append(r);
+    Global::l_priority.append(rr);
+    Global::mq2v["T1"]=222;
+    Global::mq2v["F2"]=666;*/
+    std::string ans="yes/";
+    for(int i=0; i<Global::l_priority.size(); i++){
+        CarInfo car;
+        QString mode="";
+        if(Global::l_priority[i].chargingMode==0) mode+="T";
+        else mode+="F";
+        mode += QString::number(Global::l_priority[i].queueNum);
+        strcpy(car.ownerID, Global::l_priority[i].ownerID);
+        car.Vnum = Global::mq2v.at(mode.toStdString());
+        car.batteryCapacity=Global::l_priority[i].batteryCapacity;
+        car.requestChargingCapacity = Global::l_priority[i].requestChargingCapacity;
+        car.queueTime = time(0)-Global::l_priority[i].requestTime;
+        car.queueNum=Global::l_priority[i].queueNum;
+        car.chargingMode = Global::l_priority[i].chargingMode;
+        car.alreadyChargingCapacity=0;
+        car.nowFee=0;
+        std::string k((char *)(&car), sizeof(CarInfo));
+        ans+=k;
+    }
+    for(int i=0; i<Global::l1.size(); i++){
+        CarInfo car;
+        QString mode="";
+        if(Global::l1[i].chargingMode==0) mode+="T";
+        else mode+="F";
+        mode += QString::number(Global::l1[i].queueNum);
+        strcpy(car.ownerID, Global::l1[i].ownerID);
+        car.Vnum = Global::mq2v.at(mode.toStdString());
+        car.batteryCapacity=Global::l1[i].batteryCapacity;
+        car.requestChargingCapacity = Global::l1[i].requestChargingCapacity;
+        car.queueTime = time(0)-Global::l1[i].requestTime;
+        car.queueNum=Global::l1[i].queueNum;
+        car.chargingMode = Global::l1[i].chargingMode;
+        car.alreadyChargingCapacity=0;
+        car.nowFee=0;
+        std::string k((char *)(&car), sizeof(CarInfo));
+        ans+=k;
+    }
+    sendArrayMsg(QString::fromStdString(ans).toLatin1(), admin_socketNo);
+}
 
 void PileInfoController::sendArrayMsg(QByteArray msg, int descriptor){//向指定描述符对应的socket发消息
     for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)
