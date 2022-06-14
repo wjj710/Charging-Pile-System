@@ -143,7 +143,7 @@ public:
                     pileInfoController.generateCarInfo(msgList[1].toStdString(), descriptor);
                 }else if (msgList[0]=="getReport") {
                     pileInfoController.getReport(msgList[1].toStdString(), descriptor);
-                }/*else if (msgList[0]=="malfunction") { //服务器前端发来的充电桩故障
+                }else if (msgList[0]=="malfunction") { //服务器前端发来的充电桩故障
                     //首先通知充电桩进程有故障
                     QString msg="malfunction\t";
                     sendMsg(msg,descriptor);
@@ -161,7 +161,7 @@ public:
                     //     continue;
                     // }
                     pileController.malfunction(Global::mint2Str[descriptor],2);
-                }*/else if(msgList[0]=="call"){ //充电桩叫号
+                }else if(msgList[0]=="call"){ //充电桩叫号
                     // qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
 
                     //先检查call请求有没有带参数Request，如果有就加入l2
@@ -178,6 +178,7 @@ public:
                 }else if(msgList[0]=="pileLogon"){ //充电桩登录，使服务器获取充电桩信息，充电桩进程建立连接后发送此消息
                     Global::mint2Str[descriptor]=msgList[1].toStdString();
                     Global::mstr2Int[msgList[1].toStdString()]=descriptor;
+                    Global::m_on[msgList[1].toStdString()] = true;
                 }else{
                     ans = "no/message format error\t";
                 }
