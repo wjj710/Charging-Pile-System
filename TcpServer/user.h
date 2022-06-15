@@ -3,13 +3,15 @@
 
 #include <QString>
 
-struct car{
+class car{
+public:
     QString state;
     int mode;
     int queueNum;
     QString pileNo;
     double capacity;   // 充电量
     double battery;    // 电池容量
+    car() { state = "free"; mode = 0; capacity = 0; battery = 0; }
 };
 
 class User
