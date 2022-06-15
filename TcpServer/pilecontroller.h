@@ -17,12 +17,13 @@ public:
     void malfunction(std::string, int);     // 故障处理，参数为充电桩编号和调度方式
     QList<Request> getAllRequestFromPile(std::string);
     Request getRequest(std::string);
-    void handleNewRequest(Request, QList<Request>&);
-    std::string getIdlePile(int);
+    static void handleNewRequest(Request, QList<Request>&);
+    static std::string getIdlePile(int);
 
     static bool cmpRequest(Request, Request);
 
     void sendMsg(QString msg, int descriptor);
+    static void sendMsg2(QString msg, int descriptor);
 
 
 //    int getScheduleMode();              // 获取调度模式

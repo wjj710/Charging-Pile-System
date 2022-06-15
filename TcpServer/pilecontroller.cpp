@@ -97,7 +97,7 @@ void PileController::handleNewRequest(Request req, QList<Request> & fallback_lis
     if(pileNo!="") {
         std::string req_str((char *)(&req), sizeof(req));
         std::string ret = "insertIntoPileList/" + req_str + "\t";
-        sendMsg(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
+        sendMsg2(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
     }
     else {
         fallback_list.append(req);
@@ -119,6 +119,20 @@ std::string PileController::getIdlePile(int isFastCharge) {
 }
 
 void PileController::sendMsg(QString msg, int descriptor) {
+    for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)
+    {
+        QTcpSocket *item = Global::tcpclientsocketlist.at(i);
+        if(item->socketDescriptor() == descriptor)
+        {
+            item->write(msg.toLatin1().data(),msg.size());
+            item->flush();
+            qDebug()<<"send to pile: "<<descriptor<<msg;
+            break;
+        }
+    }
+}
+
+void PileController::sendMsg2(QString msg, int descriptor) {
     for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)
     {
         QTcpSocket *item = Global::tcpclientsocketlist.at(i);

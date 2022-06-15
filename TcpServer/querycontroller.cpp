@@ -13,7 +13,6 @@ QString QueryController::getQueueNum(User &user) {
 }
 
 int QueryController::getAheadNum(User &user) {
-    if(!user.isWaiting()) throw "User Not Waiting";
     int ret = 0;
     QString num = user.getNumber();
     for(auto & it : Global::l1) {
@@ -24,7 +23,6 @@ int QueryController::getAheadNum(User &user) {
 }
 
 Detail QueryController::getDetail(User &user) {
-    if(!user.isFinish()) throw "User Not Finish";
     QString num = user.getNumber();
     for(auto & it : Global::l2)
         if(QString::fromStdString(std::to_string(it.queueNum)) == num)
