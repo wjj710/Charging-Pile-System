@@ -20,7 +20,7 @@ private:
     QString pileNo;     // 充电桩号
 
 public:
-    car p[30]; //最多30辆车
+    car p[40]; //最多40辆车
     User(QString usrID, QString state_) { ID = usrID; state = state_; }
     bool isWaiting(int v) { if (p[v].state == "waiting") return true; else return false; }
     bool isFinish(int v) { if (p[v].state == "finished") return true; else return false; }
