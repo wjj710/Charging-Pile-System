@@ -37,7 +37,7 @@ SOURCES += \
 HEADERS += \
     dbfacade.h \
     global.h \
-    pile.h \
+    #pile.h \
     pileinfo.h \
     pileinfocontroller.h \
     requestcontroller.h \

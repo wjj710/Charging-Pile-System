@@ -153,7 +153,7 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
     int flag=0; //标识有无未处理的call
     QString pNo; //记录充电桩编号
     //新请求来时检查l_call中有没有之前未处理的call，如果有就发给对应的充电桩
-    PileController::handleNewRequest(temp,Global::l1);
+    flag=PileController::handleNewRequest(temp,Global::l1);
 //    for(int j=0; j<Global::l_call.size(); j++){
 //        std::string k=Global::l_call.at(j);
 //        if(k.substr(0,1)==s){ //说明有call
@@ -186,7 +186,7 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
     user->p[v].mode=mode;
     user->p[v].queueNum=number;
     if(!flag){ //等待
-        add(temp,1);
+        //add(temp,1);
         user->p[v].state="waiting";
     }else{
         user->p[v].state="charging";
@@ -242,39 +242,40 @@ QString RequestController::changeRequest(int v, User *user,int mode, double valu
         int flag=0; //标识有无未处理的call
         QString pNo; //记录充电桩编号
         //新请求来时检查l_call中有没有之前未处理的call，如果有就发给对应的充电桩
-        for(int j=0; j<Global::l_call.size(); j++){
-            std::string k=Global::l_call.at(j);
-            if(k.substr(0,1)==s){ //说明有call
-                flag=1;
-                pNo=QString::fromStdString(k);
-                int descriptor = Global::mstr2Int[k];
-                std::string req_str((char *)(&temp), sizeof(temp));
-                std::string ret = "insertIntoPileList/" + req_str + "\t";
-                QString msg=QString::fromStdString(ret);
-                for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)
-                {
-                    QTcpSocket *item = Global::tcpclientsocketlist.at(i);
-                    if(item->socketDescriptor() == descriptor)
-                    {
-                        item->write(msg.toLatin1().data(),msg.size());
-                        item->flush();
-                        qDebug()<<"send to pile: "<<descriptor<<msg;
-                        //emit showserver(msg,item->peerAddress(),item->peerPort(),1);// 发送给客户端设置为1
-                        break;
-                    }
-                }
-                Global::mutex.lock();
-                Global::condition.wait(&Global::mutex);
-                Global::mutex.unlock();
-                Global::l_call.removeAt(j);
-                break;
-            }
-        }
+        flag=PileController::handleNewRequest(temp,Global::l1);
+//        for(int j=0; j<Global::l_call.size(); j++){
+//            std::string k=Global::l_call.at(j);
+//            if(k.substr(0,1)==s){ //说明有call
+//                flag=1;
+//                pNo=QString::fromStdString(k);
+//                int descriptor = Global::mstr2Int[k];
+//                std::string req_str((char *)(&temp), sizeof(temp));
+//                std::string ret = "insertIntoPileList/" + req_str + "\t";
+//                QString msg=QString::fromStdString(ret);
+//                for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)
+//                {
+//                    QTcpSocket *item = Global::tcpclientsocketlist.at(i);
+//                    if(item->socketDescriptor() == descriptor)
+//                    {
+//                        item->write(msg.toLatin1().data(),msg.size());
+//                        item->flush();
+//                        qDebug()<<"send to pile: "<<descriptor<<msg;
+//                        //emit showserver(msg,item->peerAddress(),item->peerPort(),1);// 发送给客户端设置为1
+//                        break;
+//                    }
+//                }
+//                Global::mutex.lock();
+//                Global::condition.wait(&Global::mutex);
+//                Global::mutex.unlock();
+//                Global::l_call.removeAt(j);
+//                break;
+//            }
+//        }
         //修改user类中车辆的信息，记录当前车辆的排队号、状态和所在充电桩号
         user->p[v].mode=mode;
         user->p[v].queueNum=newNumber;
         if(!flag){ //等待
-            add(temp,1);
+            //add(temp,1);
             user->p[v].state="waiting";
         }else{
             user->p[v].state="charging";

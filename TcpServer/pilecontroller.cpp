@@ -18,7 +18,7 @@ void PileController::call(std::string pileNo) {
         std::string req_str((char *)(&req), sizeof(req));
         std::string ret = "insertIntoPileList/" + req_str + "\t";
         sendMsg(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
-        sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
+        //sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
         QueryController::getUserByID(QString::fromStdString(req.ownerID)).changeState("charging");
     } catch (...) {
         Global::m_queue[pileNo]++;
@@ -92,16 +92,19 @@ QList<Request> PileController::getAllRequestFromPile(std::string pileNo) {
 }
 
 // Handle New Request.
-void PileController::handleNewRequest(Request req, QList<Request> & fallback_list) {
+int PileController::handleNewRequest(Request req, QList<Request> & fallback_list) {
     std::string pileNo = getIdlePile(req.chargingMode);
+    int ret=0;
     if(pileNo!="") {
         std::string req_str((char *)(&req), sizeof(req));
         std::string ret = "insertIntoPileList/" + req_str + "\t";
         sendMsg2(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
+        ret=1;
     }
     else {
         fallback_list.append(req);
     }
+    return ret;
 }
 
 // Get PileNo from m_queue. Return "" if Pile Not Found.
