@@ -10,10 +10,19 @@ UserController::UserController()
 
 QString UserController::login(int socket, QString usrID, QString password)
 {
+    bool need_append = true;
     User user(usrID, waiting);
-    Global::usr.append(user);
-    Global::mint2Str[socket]=usrID.toStdString();
-    Global::mstr2Int[usrID.toStdString()]=socket;
+    for (int i = 0; i < Global::usr.length(); i++) {
+        if (Global::usr[i].getID() == usrID) {  // 用户已在用户队列中，则不添加新的用户
+            need_append = false;
+            break;
+        }
+    }
+    if (need_append) {      // 用户没有不在队列中，将其添加到用户队列
+        Global::usr.append(user);
+        Global::mint2Str[socket]=usrID.toStdString();
+        Global::mstr2Int[usrID.toStdString()]=socket;
+    }
 
     QString correct_pass, ans;
     int myerrno = DBFacade::Instance().Query(usrID, correct_pass);
@@ -33,11 +42,6 @@ QString UserController::login(int socket, QString usrID, QString password)
 
 QString UserController::registration(int socket, QString usrID, QString password)
 {
-    User user(usrID, waiting);
-    Global::usr.append(user);
-    Global::mint2Str[socket]=usrID.toStdString();
-    Global::mstr2Int[usrID.toStdString()]=socket;
-
     QString ans;
     int myerrno = DBFacade::Instance().Insert(usrID, password);
     if (myerrno == 0) {                         // 注册成功
