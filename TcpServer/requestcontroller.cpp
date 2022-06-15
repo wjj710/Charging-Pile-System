@@ -210,6 +210,7 @@ QString RequestController::changeRequest(int v, User *user,int mode, double valu
     if (mode == 0)//修改充电量
     {
         /*1.1-1.2*/
+        user->p[v].capacity = value; // 修改user类中充电量信息
         changeCapacity(oldNumber,oldMode,value);//changeCapacity(oldNumber,value)来自list<request>操作
     }
     /*mode=1*/

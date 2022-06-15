@@ -61,11 +61,21 @@ public:
                     //注意用户登录时要创建用户类，加入用户队列usr并更新mstr2Int和mint2Str
                 }else if (msgList[0]=="logon") {
                     ans=userController.registration(descriptor, msgList[1], msgList[2]);
+                }else if (msgList[0]=="state") {
+                    std::string ownerID = Global::mint2Str[descriptor]; // 获取用户名
+                    User* usr = NULL;
+                    for (int i = 0; i < Global::usr.length(); i++) { // 查找user实例
+                        if (Global::usr[i].getID() == QString::fromStdString(ownerID))
+                            usr = &Global::usr[i];
+                    }
+                    ans = userController.getState(usr, msgList[1]);
                 }else if(msgList[0]=="pay"){
                     //ans=userController.pay(msgList[1]);
                     //详见消息格式文档
                 }else if (msgList[0]=="startRequest") {
                     //因为测试时是单客户端，这里直接用usr的第一项
+                    Global::usr[0].p[msgList[1].toInt()].capacity = msgList[3].toDouble(); // 在user类中记录充电量
+                    Global::usr[0].p[msgList[1].toInt()].battery = msgList[4].toDouble(); // 在user类中记录电池容量
                     ans=requestController.startRequest(msgList[1].toInt(),&Global::usr[0],msgList[2].toInt(),msgList[3].toDouble(),msgList[4].toDouble());
                 }else if (msgList[0]=="changeRequest") {
                     ans=requestController.changeRequest(msgList[1].toInt(),&Global::usr[0],msgList[2].toInt(),msgList[3].toDouble());

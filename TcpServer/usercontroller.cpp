@@ -49,3 +49,13 @@ QString UserController::registration(int socket, QString usrID, QString password
     }
     return ans;
 }
+
+QString UserController::getState(User* usr, QString carNum)
+{
+    int modeCode = usr->p[carNum.toInt()].mode;
+    QString state = usr->p[carNum.toInt()].state;
+    QString mode = modeCode == 0 ? "slow" : "fast";
+    QString capacity = QString::number(int(usr->p[carNum.toInt()].capacity));
+    QString battery = QString::number(int(usr->p[carNum.toInt()].battery));
+    return QString("state/%1/%2/%3/%4\t").arg(state, mode, capacity, battery);
+}

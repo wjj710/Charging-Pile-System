@@ -8,6 +8,8 @@ struct car{
     int mode;
     int queueNum;
     QString pileNo;
+    double capacity;   // 充电量
+    double battery;    // 电池容量
 };
 
 class User
@@ -15,7 +17,7 @@ class User
 private:
     QString ID;         // 用户名
     QString state;      // 当前状态
-    int mode;//0表示慢充，1表示快充
+    int mode;           // 0表示慢充，1表示快充
     QString queueNum;   // 排队号
     QString pileNo;     // 充电桩号
 

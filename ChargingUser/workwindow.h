@@ -42,9 +42,12 @@ private slots:
 
     void on_viewDetail_clicked();
 
+    void on_carButton_clicked();
+
 private:
     Ui::WorkWindow *ui;
     QString usrID;              // 用户ID
+    QString carNum;             // 车辆号
     QString usr_state;          // 用户当前状态
     QString usr_mode;           // 用户当前充电模式
     QString usr_capacity;       // 用户当前充电量
@@ -55,8 +58,11 @@ private:
     void SetStateWaiting();     // 处于等待状态下的布局
     void SetStateCharging();    // 处于充电中状态下的布局
     void SetStateFinished();    // 处于充电完成状态下的布局
+    void SetAllFalse();         // 禁用出切换车辆外的全部按钮
     void EndCharging();         // 结束充电
     void PayBills();            // 支付账单
+    void EnterCarNum();         // 输入车辆号
+    void CutoverCar();          // 切换车辆
 };
 
 #endif // WORKWINDOW_H

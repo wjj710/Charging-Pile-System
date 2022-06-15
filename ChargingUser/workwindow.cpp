@@ -3,7 +3,8 @@
 
 WorkWindow::WorkWindow(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::WorkWindow)
+    ui(new Ui::WorkWindow),
+    carNum("1")
 {
     ui->setupUi(this);
     setWindowTitle("Intelligent Charging System"); // 设置标题
@@ -12,7 +13,10 @@ WorkWindow::WorkWindow(QWidget *parent) :
 
     ui->capacityEdit->setMaxLength(8); // 充电量不允许超过8位数
     ui->batteryEdit->setMaxLength(8); // 电池容量不允许超过8位数
-    ui->infoBrowser->append("欢迎光临！");
+
+    ui->carEdit->setEnabled(false); // 禁止更改车辆号
+    ui->carEdit->setText(carNum);   // 默认车辆号为1
+    ui->infoBrowser->append(QString("欢迎光临！您正在查看%1号车辆。").arg(carNum));
 }
 
 WorkWindow::~WorkWindow()
@@ -30,7 +34,7 @@ void WorkWindow::get_usrID(QString UID)
 void WorkWindow::InitWindow()
 {
     ui->usrText->setText(usrID); // 设置用户名
-    Socket::Instance().SendRequest("state");
+    Socket::Instance().SendRequest("state/" + carNum);
 }
 
 void WorkWindow::get_state_recv(QString responce) // 更新状态
@@ -130,6 +134,22 @@ void WorkWindow::SetStateFinished()
     usr_state = "finished";
 }
 
+void WorkWindow::SetAllFalse()
+{
+    ui->submitRequest->setEnabled(false);
+    ui->modeBox->setEnabled(false);
+    ui->capacityEdit->setEnabled(false);
+    ui->batteryEdit->setEnabled(false);
+    ui->submitChange->setEnabled(false);
+    ui->changeMode->setEnabled(false);
+    ui->changeCapacity->setEnabled(false);
+    ui->viewWaitNum->setEnabled(false);
+    ui->viewQueueNum->setEnabled(false);
+    ui->viewDetail->setEnabled(false);
+    ui->endORpay->setEnabled(false);
+    ui->quit->setEnabled(true);
+}
+
 void WorkWindow::on_submitRequest_clicked() // 提交充电请求
 {
     // 获取用户输入
@@ -151,7 +171,7 @@ void WorkWindow::on_submitRequest_clicked() // 提交充电请求
         return;
     }
 
-    QString request = QString("charging/%1/%2/%3").arg(usr_mode, usr_capacity, usr_battery);
+    QString request = QString("startRequest/%1/%2/%3/%4").arg(carNum, usr_mode, usr_capacity, usr_battery);
     Socket::Instance().SendRequest(request); // 发送充电请求
     SetStateWaiting(); // 转入等待状态
 }
@@ -180,12 +200,12 @@ void WorkWindow::on_submitChange_clicked()                                // 提
     // 判断输入是否合法
     if (temp_capacity.isEmpty() || IsNumber(temp_capacity) == false) {    // 判断充电量输入是否合法
         MessageWindow(this, "充电量必须是整数！");
-        Socket::Instance().SendRequest("state");
+        Socket::Instance().SendRequest("state/" + carNum);
         return;
     }
     if (temp_capacity.toInt() > usr_battery.toInt()) {                   // 判断充电量是否大于电池容量
         MessageWindow(this, "充电量不能大于电池容量");
-        Socket::Instance().SendRequest("state");
+        Socket::Instance().SendRequest("state/" + carNum);
         return;
     }
 
@@ -193,18 +213,18 @@ void WorkWindow::on_submitChange_clicked()                                // 提
     if (usr_capacity == temp_capacity && usr_mode == temp_mode) {       // 充电量和充电模式没有变化
         MessageWindow(this, "充电请求没有变化，该请求不会被提交");
     } else if (usr_mode != temp_mode) {                                 // 充电模式改变，提交修改申请
-        Socket::Instance().SendRequest(QString("changeRequest/mode/%1").arg(temp_mode));
+        Socket::Instance().SendRequest(QString("changeRequest/%1/mode/%2").arg(carNum, temp_mode));
     } else if (usr_capacity != temp_capacity) {                         // 充电量改变，提交申请
-        Socket::Instance().SendRequest(QString("changeRequest/capacity/%1").arg(temp_capacity));
+        Socket::Instance().SendRequest(QString("changeRequest/%1/capacity/%2").arg(carNum, temp_capacity));
     }
 
     // 更新目前状态
-    Socket::Instance().SendRequest("state");
+    Socket::Instance().SendRequest("state/" + carNum);
 }
 
 void WorkWindow::on_viewWaitNum_clicked()                               // 查看前车等待数量
 {
-    Socket::Instance().SendRequest("getAheadNum");
+    Socket::Instance().SendRequest("getAheadNum/" + carNum);
 }
 
 void WorkWindow::get_ahead_recv(QString responce)
@@ -214,7 +234,7 @@ void WorkWindow::get_ahead_recv(QString responce)
 
 void WorkWindow::on_viewQueueNum_clicked()                              // 查看排队号
 {
-    Socket::Instance().SendRequest("getQueueNum");
+    Socket::Instance().SendRequest("getQueueNum/" + carNum);
 }
 
 void WorkWindow::get_queue_recv(QString responce)
@@ -224,7 +244,7 @@ void WorkWindow::get_queue_recv(QString responce)
 
 void WorkWindow::on_viewDetail_clicked()                                //  查看详单
 {
-    Socket::Instance().SendRequest("getDetail");
+    Socket::Instance().SendRequest("getDetail/" + carNum);
 }
 
 void WorkWindow::get_detail_recv(QString responce)
@@ -243,13 +263,13 @@ void WorkWindow::on_endORpay_clicked()
 
 void WorkWindow::EndCharging()                                          // 结束充电
 {
-    Socket::Instance().SendRequest("endRequest");
+    Socket::Instance().SendRequest("endRequest/" + carNum);
     SetStateFinished();
 }
 
 void WorkWindow::PayBills()                                             // 支付账单
 {
-    Socket::Instance().SendRequest("bill");
+    Socket::Instance().SendRequest("bill/" + carNum);
 }
 
 void WorkWindow::get_bill_recv(QString responce)
@@ -263,7 +283,7 @@ void WorkWindow::get_bill_recv(QString responce)
     int ret = box.exec();
     switch(ret) {
     case QMessageBox::Ok:
-        Socket::Instance().SendRequest("pay");
+        Socket::Instance().SendRequest("pay/" + carNum);
         MessageWindow(this, "支付成功");
         SetStateFree();
         ui->infoBrowser->append("支付成功，感谢您的使用！");
@@ -276,4 +296,34 @@ void WorkWindow::get_bill_recv(QString responce)
 void WorkWindow::on_quit_clicked()
 {
     this->close();
+}
+
+void WorkWindow::on_carButton_clicked()                             // 切换车辆
+{
+    if (ui->carButton->text() == "切换车辆")
+        EnterCarNum();
+    else if (ui->carButton->text() == "确认切换")
+        CutoverCar();
+}
+
+void WorkWindow::EnterCarNum()
+{
+    SetAllFalse();                      // 禁用其他按钮
+    ui->carButton->setText("确认切换");  // 修改按钮功能
+    ui->carEdit->setEnabled(true);      // 开启车辆号输入
+}
+
+void WorkWindow::CutoverCar()
+{
+    QString temp_carNum = ui->carEdit->text();
+    if (temp_carNum.isEmpty() || IsNumber(temp_carNum) == false) {    // 判断车辆号是否合法
+        MessageWindow(this, "车辆号必须是整数！");
+        return;
+    }
+    carNum = temp_carNum;
+    ui->carEdit->setEnabled(false);
+    ui->carButton->setText("切换车辆");
+    Socket::Instance().SendRequest(QString("state/%1").arg(carNum));
+    ui->infoBrowser->clear();
+    ui->infoBrowser->append(QString("欢迎光临！您正在查看%1号车辆。").arg(carNum));
 }

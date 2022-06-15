@@ -33,6 +33,14 @@ public:
      * @return 回复信息
      */
     QString registration(int socket, QString usrID, QString password);
+
+    /**
+     * @brief getState 获取状态
+     * @param socket 用户套接字
+     * @param carNum 车辆号
+     * @return 回复信息
+     */
+    QString getState(User* usr, QString carNum);
 };
 
 #endif // USERCONTROLLER_H
