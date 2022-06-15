@@ -13,6 +13,7 @@ public:
     void generateCarInfo(std::string pileNo,int admin_socketNo);  //生成某充电桩排队车辆信息，供服务器调用
     void getReport(std::string pileNo,int admin_socketNo);        //生成报表，供服务器调用
     void sendArrayMsg(QByteArray msg, int descriptor);//向指定描述符对应的socket发消息
+    void getWaiting(int descriptor);//生成等候区车辆信息，给管理员端发送
 };
 
 #endif // PILEINFOCONTROLLER_H

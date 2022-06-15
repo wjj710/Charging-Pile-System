@@ -88,7 +88,7 @@ QTabWidget{
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="iconSize">
        <size>
@@ -598,7 +598,7 @@ color: rgb(254, 255, 228);
 </string>
             </property>
             <property name="text">
-             <string>查询充电桩状态</string>
+             <string>  查询充电桩状态</string>
             </property>
            </widget>
           </item>
@@ -667,7 +667,7 @@ border:2px groove gray;border-radius:10px;padding:2px 4px;
 color: rgb(254, 255, 228);</string>
             </property>
             <property name="text">
-             <string>查询充电桩等候服务车辆信息</string>
+             <string>查询排队区车辆信息</string>
             </property>
            </widget>
           </item>
@@ -733,7 +733,7 @@ border:2px groove gray;border-radius:10px;padding:2px 4px;
 color: rgb(254, 255, 228);</string>
             </property>
             <property name="text">
-             <string>查看报表</string>
+             <string>  查看报表</string>
             </property>
            </widget>
           </item>
@@ -757,6 +757,53 @@ border:2px groove gray;border-radius:10px;padding:2px 4px;
           </item>
           <item>
            <widget class="QTextBrowser" name="Report">
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(255, 255, 255, 200);</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="styleSheet">
+             <string notr="true">font: 75 14pt &quot;微软雅黑&quot;;
+color: rgb(254, 255, 228);</string>
+            </property>
+            <property name="text">
+             <string>  查看等候区</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="GetWaiting">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(135, 232, 118);
+border:2px groove gray;border-radius:10px;padding:2px 4px;
+</string>
+            </property>
+            <property name="text">
+             <string>查看</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="waiting">
             <property name="styleSheet">
              <string notr="true">background-color: rgba(255, 255, 255, 200);</string>
             </property>
