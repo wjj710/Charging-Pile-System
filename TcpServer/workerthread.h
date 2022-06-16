@@ -78,7 +78,7 @@ public:
                     Global::usr[0].p[msgList[1].toInt()].battery = msgList[4].toDouble(); // 在user类中记录电池容量
                     ans=requestController.startRequest(msgList[1].toInt(),&Global::usr[0],msgList[2].toInt(),msgList[3].toDouble(),msgList[4].toDouble());
                 }else if (msgList[0]=="changeRequest") {
-                    ans=requestController.changeRequest(msgList[1].toInt(),&Global::usr[0],msgList[2].toInt(),msgList[3].toDouble());
+                    ans=requestController.changeRequest(msgList[1].toInt(),&Global::usr[0],msgList[2],msgList[3].toDouble());
                 }else if (msgList[0]=="endRequest") {
                     ans=requestController.endRequest(msgList[1].toInt(),&Global::usr[0]);
                 }else if (msgList[0]=="getQueueNum") {
