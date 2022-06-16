@@ -112,9 +112,9 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
                     break;
                 }
             }
-            Global::mutex.lock();
-            Global::condition.wait(&Global::mutex);
-            Global::mutex.unlock();
+//            Global::mutex.lock();
+//            Global::condition.wait(&Global::mutex);
+//            Global::mutex.unlock();
         }
     }
     /*3.提交充电请求*/
