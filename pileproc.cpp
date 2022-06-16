@@ -74,7 +74,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
             memcpy(s+5,(&p->chargingQueue[i]),sizeof(Request));
             s[5+sizeof(Request)]='\t';
             WaitForSingleObject(hMutex, INFINITE);
-            send(sock,s,strlen(s)+1,NULL);
+            send(sock,s,6+sizeof(Request),NULL);
             ReleaseMutex(hMutex);
             WaitForSingleObject(wMutex, INFINITE);
             p->chargingQueue.erase(p->chargingQueue.begin()+i);
