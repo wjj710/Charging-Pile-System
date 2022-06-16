@@ -9,7 +9,7 @@ WorkWindow::WorkWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Intelligent Charging System"); // 设置标题
     ui->welcome->setAlignment(Qt::AlignCenter); // 欢迎字样居中
-    setFixedSize(800, 600); // 设置窗口大小
+//    setFixedSize(800, 600); // 设置窗口大小
 
     ui->capacityEdit->setMaxLength(8); // 充电量不允许超过8位数
     ui->batteryEdit->setMaxLength(8); // 电池容量不允许超过8位数
@@ -53,14 +53,14 @@ void WorkWindow::get_state_recv(QString responce) // 更新状态
     } else if (usr_state == "finished") {
         SetStateFinished();
     }
-    ui->modeBox->setCurrentIndex(usr_mode == "fast" ? 0 : 1);
-    ui->capacityEdit->setText(usr_capacity);
+    QString capacity = QString::number(test_amount[ui->spinBox->value()],'g',5);
+    ui->modeBox->setCurrentIndex(test_model[ui->spinBox->value()]);
+    ui->capacityEdit->setText(capacity);
     ui->batteryEdit->setText(usr_battery);
 }
 
 void WorkWindow::SetStateFree()
 {
-    ui->stateText->setText("尚未提交申请");
     ui->submitRequest->setEnabled(true);
     ui->modeBox->setEnabled(true);
     ui->capacityEdit->setEnabled(true);
@@ -79,7 +79,6 @@ void WorkWindow::SetStateFree()
 
 void WorkWindow::SetStateWaiting()
 {
-    ui->stateText->setText("等待中");
     ui->submitRequest->setEnabled(false);
     ui->modeBox->setEnabled(false);
     ui->capacityEdit->setEnabled(false);
@@ -98,7 +97,6 @@ void WorkWindow::SetStateWaiting()
 
 void WorkWindow::SetStateCharging()
 {
-    ui->stateText->setText("充电中");
     ui->submitRequest->setEnabled(false);
     ui->modeBox->setEnabled(false);
     ui->capacityEdit->setEnabled(false);
@@ -117,7 +115,6 @@ void WorkWindow::SetStateCharging()
 
 void WorkWindow::SetStateFinished()
 {
-    ui->stateText->setText("充电完成");
     ui->submitRequest->setEnabled(false);
     ui->modeBox->setEnabled(false);
     ui->capacityEdit->setEnabled(false);
@@ -158,18 +155,18 @@ void WorkWindow::on_submitRequest_clicked() // 提交充电请求
     usr_battery = ui->batteryEdit->text();
 
     // 判断输入是否合法
-    if (usr_capacity.isEmpty() || IsNumber(usr_capacity) == false) { // 判断充电量输入是否合法
-        MessageWindow(this, "充电量必须是整数！");
-        return;
-    }
-    if (usr_battery.isEmpty() || IsNumber(usr_battery) == false) { // 判断电池容量输入是否合法
-        MessageWindow(this, "电池容量必须是整数！");
-        return;
-    }
-    if (usr_capacity.toInt() > usr_battery.toInt()) { // 判断充电量是否大于电池容量
-        MessageWindow(this, "充电量不能大于电池容量");
-        return;
-    }
+//    if (usr_capacity.isEmpty() || IsNumber(usr_capacity) == false) { // 判断充电量输入是否合法
+//        MessageWindow(this, "充电量必须是整数！");
+//        return;
+//    }
+//    if (usr_battery.isEmpty() || IsNumber(usr_battery) == false) { // 判断电池容量输入是否合法
+//        MessageWindow(this, "电池容量必须是整数！");
+//        return;
+//    }
+//    if (usr_capacity.toInt() > usr_battery.toInt()) { // 判断充电量是否大于电池容量
+//        MessageWindow(this, "充电量不能大于电池容量");
+//        return;
+//    }
 
     QString request = QString("startRequest/%1/%2/%3/%4").arg(carNum, usr_mode, usr_capacity, usr_battery);
     Socket::Instance().SendRequest(request); // 发送充电请求
@@ -198,16 +195,16 @@ void WorkWindow::on_submitChange_clicked()                                // 提
     QString temp_mode = ui->modeBox->currentText() == "slow" ? "0" : "1";
 
     // 判断输入是否合法
-    if (temp_capacity.isEmpty() || IsNumber(temp_capacity) == false) {    // 判断充电量输入是否合法
-        MessageWindow(this, "充电量必须是整数！");
-        Socket::Instance().SendRequest("state/" + carNum);
-        return;
-    }
-    if (temp_capacity.toInt() > usr_battery.toInt()) {                   // 判断充电量是否大于电池容量
-        MessageWindow(this, "充电量不能大于电池容量");
-        Socket::Instance().SendRequest("state/" + carNum);
-        return;
-    }
+//    if (temp_capacity.isEmpty() || IsNumber(temp_capacity) == false) {    // 判断充电量输入是否合法
+//        MessageWindow(this, "充电量必须是整数！");
+//        Socket::Instance().SendRequest("state/" + carNum);
+//        return;
+//    }
+//    if (temp_capacity.toInt() > usr_battery.toInt()) {                   // 判断充电量是否大于电池容量
+//        MessageWindow(this, "充电量不能大于电池容量");
+//        Socket::Instance().SendRequest("state/" + carNum);
+//        return;
+//    }
 
     // 提交修改申请
     if (usr_capacity == temp_capacity && usr_mode == temp_mode) {       // 充电量和充电模式没有变化
@@ -315,14 +312,15 @@ void WorkWindow::EnterCarNum()
 
 void WorkWindow::CutoverCar()
 {
-    QString temp_carNum = ui->carEdit->text();
-    if (temp_carNum.isEmpty() || IsNumber(temp_carNum) == false) {    // 判断车辆号是否合法
-        MessageWindow(this, "车辆号必须是整数！");
-        return;
-    } else if (temp_carNum.toInt() >= 40) {
-        MessageWindow(this, "车辆号必须小于40！");
-        return;
-    }
+//    QString temp_carNum = ui->carEdit->text();
+    QString temp_carNum = QString::number(ui->spinBox->value());
+//    if (temp_carNum.isEmpty() || IsNumber(temp_carNum) == false) {    // 判断车辆号是否合法
+//        MessageWindow(this, "车辆号必须是整数！");
+//        return;
+//    } else if (temp_carNum.toInt() >= 40) {
+//        MessageWindow(this, "车辆号必须小于40！");
+//        return;
+//    }
     carNum = temp_carNum;
     ui->carEdit->setEnabled(false);
     ui->carButton->setText("切换车辆");
@@ -330,3 +328,13 @@ void WorkWindow::CutoverCar()
     ui->infoBrowser->clear();
     ui->infoBrowser->append(QString("欢迎光临！您正在查看%1号车辆。").arg(carNum));
 }
+
+void WorkWindow::on_spinBox_valueChanged(int arg1)
+{
+    CutoverCar();
+    QString capacity = QString::number(test_amount[ui->spinBox->value()],'g',5);
+    qDebug()<<"capacity:"<<capacity<<"   Index:"<<test_model[ui->spinBox->value()];
+    ui->capacityEdit->setText(capacity);
+    ui->modeBox->setCurrentIndex(test_model[ui->spinBox->value()]);
+}
+

@@ -27,6 +27,8 @@ private slots:
     void on_initialize_clicked();
     void on_malfunction_clicked();
     void on_recover_clicked();
+    void on_Print_clicked();
+
 signals:
     void sendinit(int, int, int, int);
     void sendserver(QString,int);

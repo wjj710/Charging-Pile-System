@@ -44,7 +44,17 @@ private slots:
 
     void on_carButton_clicked();
 
+    void on_spinBox_valueChanged(int arg1);
+
 private:
+    int test_model[40] = {-1,0,0,1,1,0,0,1,0,1,
+                           0,1,1,1,1,0,1,0,0,1,
+                           1,1,1,1,0,0,0,0,1,0,
+                           0};
+    double test_amount[40]={0 ,40 ,30,100,120,20,20,110,20 ,105,
+                            10,110,90,110,95 ,10,60,10 ,7.5,75 ,
+                            95,95 ,70,80 ,5  ,15,20,25 ,30 ,30 ,
+                            10};
     Ui::WorkWindow *ui;
     QString usrID;              // 用户ID
     QString carNum;             // 车辆号

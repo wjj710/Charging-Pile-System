@@ -88,3 +88,9 @@ void Widget::on_recover_clicked()
     ui->dispatchMethod->setEnabled(true);
 }
 
+
+void Widget::on_Print_clicked()
+{
+
+}
+

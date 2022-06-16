@@ -3,7 +3,7 @@
 #include "pileinfo.h"
 #include "time.h"
 #include "QDir"
-#include <unistd.h>
+//#include <unistd.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -439,7 +439,8 @@ void MainWindow::on_GetAllInfo_clicked()
         text+="\n";
     }
     ui->Info->setText(text);
-    QString filepath = QString::number(time(0))+"_chargingcarinfo.txt";
+    static int times = 0;
+    QString filepath = QString::number(++times)+"_chargingcarinfo.txt";
     QFile data(filepath);
     data.open(QIODevice::WriteOnly);
     QString str = ui->Info->toPlainText();
@@ -561,7 +562,8 @@ void MainWindow::on_GetWaiting_clicked()
         text+="\n";
     }
     ui->waiting->setText(text);
-    QString filepath = QString::number(time(0))+"_waitingcarinfo.txt";
+    static int times = 0;
+    QString filepath = QString::number(++times)+"_waitingcarinfo.txt";
     QFile data(filepath);
     data.open(QIODevice::WriteOnly);
     QString str = ui->waiting->toPlainText();

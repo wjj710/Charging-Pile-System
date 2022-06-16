@@ -32,7 +32,7 @@ private slots:
     void on_GetInfo_clicked();
     void on_GetAllInfo_clicked();
     void on_GetReport_clicked();
-
+    void on_GetWaiting_clicked();
     void socket_Read_Data();
     void socket_Disconnected();
 private:
