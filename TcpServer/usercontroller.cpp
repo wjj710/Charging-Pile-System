@@ -20,9 +20,9 @@ QString UserController::login(int socket, QString usrID, QString password)
     }
     if (need_append) {      // 用户没有不在队列中，将其添加到用户队列
         Global::usr.append(user);
-        Global::mint2Str[socket]=usrID.toStdString();
-        Global::mstr2Int[usrID.toStdString()]=socket;
     }
+    Global::mint2Str[socket]=usrID.toStdString();   // 更新套接字和用户ID的映射关系
+    Global::mstr2Int[usrID.toStdString()]=socket;
 
     QString correct_pass, ans;
     int myerrno = DBFacade::Instance().Query(usrID, correct_pass);

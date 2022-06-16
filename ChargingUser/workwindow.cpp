@@ -153,7 +153,7 @@ void WorkWindow::SetAllFalse()
 void WorkWindow::on_submitRequest_clicked() // 提交充电请求
 {
     // 获取用户输入
-    usr_mode = ui->modeBox->currentText();
+    usr_mode = ui->modeBox->currentText() == "slow" ? "0" : "1";
     usr_capacity = ui->capacityEdit->text();
     usr_battery = ui->batteryEdit->text();
 
@@ -195,7 +195,7 @@ void WorkWindow::on_changeCapacity_clicked()
 void WorkWindow::on_submitChange_clicked()                                // 提交修改申请
 {
     QString temp_capacity = ui->capacityEdit->text();
-    QString temp_mode = ui->modeBox->currentText();
+    QString temp_mode = ui->modeBox->currentText() == "slow" ? "0" : "1";
 
     // 判断输入是否合法
     if (temp_capacity.isEmpty() || IsNumber(temp_capacity) == false) {    // 判断充电量输入是否合法
@@ -318,6 +318,9 @@ void WorkWindow::CutoverCar()
     QString temp_carNum = ui->carEdit->text();
     if (temp_carNum.isEmpty() || IsNumber(temp_carNum) == false) {    // 判断车辆号是否合法
         MessageWindow(this, "车辆号必须是整数！");
+        return;
+    } else if (temp_carNum.toInt() >= 40) {
+        MessageWindow(this, "车辆号必须小于40！");
         return;
     }
     carNum = temp_carNum;
