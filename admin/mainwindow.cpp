@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "pileinfo.h"
+#include "time.h"
+#include "QDir"
 #include <unistd.h>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -204,7 +206,7 @@ void MainWindow::on_GetState_clicked()
     int chargingnumber=pileinfo->totalChargingNumber;
     text+="    充电总次数："+QString::number(chargingnumber)+"\n";
     time_t chargingtime=pileinfo->totalChargingTime;
-    text+="    充电总时长："+timetran(chargingtime)+"\n";
+    //text+="    充电总时长："+timetran(chargingtime)+"\n";
     double chargingcapacity=pileinfo->totalChargingCapacity;
     text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     ui->State->setText(text);
@@ -249,7 +251,7 @@ void MainWindow::on_GetAllState_clicked()
         int chargingnumber=pileinfo->totalChargingNumber;
         text+="    充电总次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=pileinfo->totalChargingTime;
-        text+="    充电总时长："+timetran(chargingtime)+"\n";
+        //text+="    充电总时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=pileinfo->totalChargingCapacity;
         text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     }
@@ -277,7 +279,7 @@ void MainWindow::on_GetAllState_clicked()
         int chargingnumber=pileinfo->totalChargingNumber;
         text+="    充电总次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=pileinfo->totalChargingTime;
-        text+="    充电总时长："+timetran(chargingtime)+"\n";
+        //text+="    充电总时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=pileinfo->totalChargingCapacity;
         text+="    充电总电量："+QString::number(chargingcapacity)+"\n";
     }
@@ -321,7 +323,7 @@ void MainWindow::on_GetInfo_clicked()
         double request=c->requestChargingCapacity;
         text+="    请求充电量："+QString::number(request)+"\n";
         time_t time=c->queueTime;
-        text+="    排队时长："+timetran(time)+"\n";
+        //text+="    排队时长："+timetran(time)+"\n";
         int queuenum=c->queueNum;
         text+="    排队号："+QString::number(queuenum)+"\n";
         int mode=c->chargingMode;
@@ -367,24 +369,26 @@ void MainWindow::on_GetAllInfo_clicked()
             char ownID[8];
             strcpy(ownID, c->ownerID);
             std::string ownid=ownID;
-            text+="    用户ID："+QString::fromStdString(ownID)+"\n";
+          //  text+="    用户ID："+QString::fromStdString(ownID)+"\n";
             double batterycapacity=c->batteryCapacity;
-            text+="    电池容量："+QString::number(batterycapacity)+"\n";
+           // text+="    电池容量："+QString::number(batterycapacity)+"\n";
             double request=c->requestChargingCapacity;
-            text+="    请求充电量："+QString::number(request)+"\n";
+          //  text+="    请求充电量："+QString::number(request)+"\n";
             time_t time=c->queueTime;
-            text+="    排队时长："+timetran(time)+"\n";
+            //text+="    排队时长："+timetran(time)+"\n";
             int queuenum=c->queueNum;
-            text+="    排队号："+QString::number(queuenum)+"\n";
+           // text+="    排队号："+QString::number(queuenum)+"\n";
             int mode=c->chargingMode;
-            if(mode==0)
-                text+="    充电模式：T\n";
-            else
-                text+="    充电模式：F\n";            int alreadycapacity=c->alreadyChargingCapacity;
+          //  if(mode==0)
+          //      text+="    充电模式：T\n";
+          //  else
+         //       text+="    充电模式：F\n";
+            int alreadycapacity=c->alreadyChargingCapacity;
             text+="    *已冲电量："+QString::number(alreadycapacity)+"\n";
             int nowfee=c->nowFee;
             text+="    *当前费用："+QString::number(nowfee)+"\n";
         }
+        text+="\n";
     }
     for(int i=1; i<=TrickleChargingPileNum; i++)
     {
@@ -413,27 +417,35 @@ void MainWindow::on_GetAllInfo_clicked()
             char ownID[8];
             strcpy(ownID, c->ownerID);
             std::string ownid=ownID;
-            text+="    用户ID："+QString::fromStdString(ownID)+"\n";
+           // text+="    用户ID："+QString::fromStdString(ownID)+"\n";
             double batterycapacity=c->batteryCapacity;
-            text+="    电池容量："+QString::number(batterycapacity)+"\n";
+           // text+="    电池容量："+QString::number(batterycapacity)+"\n";
             double request=c->requestChargingCapacity;
-            text+="    请求充电量："+QString::number(request)+"\n";
+            //text+="    请求充电量："+QString::number(request)+"\n";
             time_t time=c->queueTime;
-            text+="    排队时长："+timetran(time)+"\n";
+            //text+="    排队时长："+timetran(time)+"\n";
             int queuenum=c->queueNum;
-            text+="    排队号："+QString::number(queuenum)+"\n";
+            //text+="    排队号："+QString::number(queuenum)+"\n";
             int mode=c->chargingMode;
-            if(mode==0)
-                text+="    充电模式：T\n";
-            else
-                text+="    充电模式：F\n";
+            //if(mode==0)
+             //   text+="    充电模式：T\n";
+           // else
+            //    text+="    充电模式：F\n";
             int alreadycapacity=c->alreadyChargingCapacity;
             text+="    *已冲电量："+QString::number(alreadycapacity)+"\n";
             int nowfee=c->nowFee;
             text+="    *当前费用："+QString::number(nowfee)+"\n";
         }
+        text+="\n";
     }
     ui->Info->setText(text);
+    QString filepath = QString::number(time(0))+"_chargingcarinfo.txt";
+    QFile data(filepath);
+    data.open(QIODevice::WriteOnly);
+    QString str = ui->Info->toPlainText();
+    QByteArray context = str.toUtf8();
+    data.write(context);
+    data.close();
 }
 void MainWindow::on_GetReport_clicked()
 {
@@ -460,7 +472,7 @@ void MainWindow::on_GetReport_clicked()
         int chargingnumber=report->totalChargingNumber;
         text+="    累计充电次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=report->totalChargingTime;
-        text+="    累计充电时长："+timetran(chargingtime)+"\n";
+        //text+="    累计充电时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=report->totalChargingCapacity;
         text+="    累计充电量："+QString::number(chargingcapacity)+"\n";
         double chargingfee=report->totalChargingFee;
@@ -491,7 +503,7 @@ void MainWindow::on_GetReport_clicked()
         int chargingnumber=report->totalChargingNumber;
         text+="    累计充电次数："+QString::number(chargingnumber)+"\n";
         time_t chargingtime=report->totalChargingTime;
-        text+="    累计充电时长："+timetran(chargingtime)+"\n";
+        //text+="    累计充电时长："+timetran(chargingtime)+"\n";
         double chargingcapacity=report->totalChargingCapacity;
         text+="    累计充电量："+QString::number(chargingcapacity)+"\n";
         double chargingfee=report->totalChargingFee;
@@ -534,7 +546,7 @@ void MainWindow::on_GetWaiting_clicked()
         double request=c->requestChargingCapacity;
         text+="    *请求充电量："+QString::number(request)+"\n";
         time_t time=c->queueTime;
-        text+="    排队时长："+timetran(time)+"\n";
+        //text+="    排队时长："+timetran(time)+"\n";
         int queuenum=c->queueNum;
         text+="    排队号："+QString::number(queuenum)+"\n";
         int mode=c->chargingMode;
@@ -549,6 +561,13 @@ void MainWindow::on_GetWaiting_clicked()
         text+="\n";
     }
     ui->waiting->setText(text);
+    QString filepath = QString::number(time(0))+"_waitingcarinfo.txt";
+    QFile data(filepath);
+    data.open(QIODevice::WriteOnly);
+    QString str = ui->waiting->toPlainText();
+    QByteArray context = str.toUtf8();
+    data.write(context);
+    data.close();
 }
 
 void MainWindow::socket_Read_Data()
