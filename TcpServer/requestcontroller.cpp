@@ -117,12 +117,11 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
 //            Global::mutex.unlock();
         }
     }
-    int number;//新的排队号
     if (checkList() == false)//checkList()来自list<request>操作
     {
         return "no/无空闲车位！\t";
     }
-    number = newQueueNum(mode);
+    int number = newQueueNum(mode);//新的排队号
     char userID[8];
     for(int i=0;i<8;i++) if(i<user->getID().length())
     {
@@ -131,6 +130,7 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
     struct Request temp={
         number, v,{userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, mode, capacity,0,batteryCapacity,0,0,0,0,0
     };
+    //add(temp,1);
     //为全局变量赋值
     std::string s=mode?"F":"T";
     Global::mq2v[s+std::to_string(number)]=v;
@@ -176,6 +176,7 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
         user->p[v].state="charging";
         user->p[v].pileNo=pNo;
     }
+    //return "当前mode为："+QString::number(temp.chargingMode)+"\t当前排队号："+QString::number(temp.queueNum)+"/yes\t";
     return "yes\t";
 }
 
@@ -193,20 +194,20 @@ QString RequestController::changeRequest(int v, User *user,QString mode, double 
     else if (mode == "mode")//修改充电模式
     {
         user->p[v].mode=(int)value;
-        return "yes";
         int newNumber = newQueueNum((int)value);
         Request r=deleteRequest(oldNumber,oldMode);//deleteNum(number,mode)来自list<request>操作
         char userID[8];
-        for(int i=0;i<8;i++)
+        for(int i=0;i<8;i++) if(i<user->getID().length())
         {
             userID[i]= user->getID().at(i).unicode();
         }
         struct Request temp={
             newNumber,v, {userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, (int)value, r.requestChargingCapacity,0,r.batteryCapacity,0,0,0,0,0
         };
+        add(temp,1);
         std::string s;
         //std::string s=value?"F":"T";
-        if(value==1)
+        if((int)value==1)
         {
             s="F";
         }
