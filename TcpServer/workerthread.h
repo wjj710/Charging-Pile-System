@@ -83,6 +83,7 @@ public:
                 }else if (msgList[0]=="changeRequest") {
                     ans=requestController.changeRequest(msgList[1].toInt(),&Global::usr[0],msgList[2],msgList[3].toDouble());
                 }else if (msgList[0]=="endRequest") {
+                    qDebug()<<"in workerThread\n";
                     ans=requestController.endRequest(msgList[1].toInt(),&Global::usr[0]);
                 }else if (msgList[0]=="getQueueNum") {
                     try {

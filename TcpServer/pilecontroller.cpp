@@ -92,19 +92,17 @@ QList<Request> PileController::getAllRequestFromPile(std::string pileNo) {
 }
 
 // Handle New Request.
-int PileController::handleNewRequest(Request req, QList<Request> & fallback_list) {
+QString PileController::handleNewRequest(Request req, QList<Request> & fallback_list) {
     std::string pileNo = getIdlePile(req.chargingMode);
-    int ret=0;
     if(pileNo!="") {
         std::string req_str((char *)(&req), sizeof(req));
         std::string ret = "insertIntoPileList/" + req_str + "\t";
         sendMsg2(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
-        ret=1;
     }
     else {
         fallback_list.append(req);
     }
-    return ret;
+    return QString::fromStdString(pileNo);
 }
 
 // Get PileNo from m_queue. Return "" if Pile Not Found.

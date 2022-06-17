@@ -45,10 +45,10 @@ void Server::slotsend(QByteArray pre_msg, QString msg,int descriptor){
         //emit loopquit(); //向处理线程发信号，通知loop退出
         Global::condition.wakeAll();
     }else{
-        Global::handleList.append(msgList);
         if(msgList[0]=="call"){
             Global::bytebuffer1=arrayList; //存放充完电的请求
         }
+        Global::handleList.append(msgList);
     }
 }
 

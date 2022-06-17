@@ -138,10 +138,9 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
     std::string s=mode?"F":"T";
     Global::mq2v[s+std::to_string(number)]=v;
     //Global::mv2q[v]=s+std::to_string(number);
-    int flag=0; //标识有无未处理的call
-    QString pNo; //记录充电桩编号
+    //int flag=0; //标识有无未处理的call
+    QString pNo=PileController::handleNewRequest(temp,Global::l1); //记录充电桩编号
     //新请求来时检查l_call中有没有之前未处理的call，如果有就发给对应的充电桩
-    flag=PileController::handleNewRequest(temp,Global::l1);
 //    for(int j=0; j<Global::l_call.size(); j++){
 //        std::string k=Global::l_call.at(j);
 //        if(k.substr(0,1)==s){ //说明有call
@@ -173,10 +172,11 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
     //修改user类中车辆的信息，记录当前车辆的排队号、状态和所在充电桩号
     user->p[v].mode=mode;
     user->p[v].queueNum=number;
-    if(!flag){ //等待
+    if(pNo==""){ //等待
         user->p[v].state="waiting";
     }else{
         user->p[v].state="charging";
+        qDebug()<<Global::usr[0].p[v].state<<"----\n";
         user->p[v].pileNo=pNo;
     }
     //return "当前mode为："+QString::number(temp.chargingMode)+"\t当前排队号："+QString::number(temp.queueNum)+"/yes\t";
@@ -220,10 +220,8 @@ QString RequestController::changeRequest(int v, User *user,QString mode, double 
         }
         Global::mq2v[s+std::to_string(newNumber)]=v;
         //Global::mv2q[v]=s+std::to_string(number);
-        int flag=0; //标识有无未处理的call
-        QString pNo; //记录充电桩编号
+        QString pNo=PileController::handleNewRequest(temp,Global::l1); //记录充电桩编号
         //新请求来时检查l_call中有没有之前未处理的call，如果有就发给对应的充电桩
-        flag=PileController::handleNewRequest(temp,Global::l1);
 //        for(int j=0; j<Global::l_call.size(); j++){
 //            std::string k=Global::l_call.at(j);
 //            if(k.substr(0,1)==s){ //说明有call
@@ -254,7 +252,7 @@ QString RequestController::changeRequest(int v, User *user,QString mode, double 
 //        }
         //修改user类中车辆的信息，记录当前车辆的排队号、状态和所在充电桩号
         user->p[v].queueNum=newNumber;
-        if(!flag){ //等待
+        if(pNo==""){ //等待
             user->p[v].state="waiting";
         }else{
             user->p[v].state="charging";
@@ -266,20 +264,24 @@ QString RequestController::changeRequest(int v, User *user,QString mode, double 
 
 QString RequestController::endRequest(int v, User *user)//结束请求
 {
-    int state = user->isWaiting(v);//isWaiting()来自user.h
+    bool state = user->isWaiting(v);//isWaiting()来自user.h
     int number = user->p[v].queueNum;//getNumber()来自user.h
     int mode=user->p[v].mode;//getMode()来自user.h
+    qDebug()<<user->p[v].state<<"\n";
+    qDebug()<<"222\n";
     /*state=1，在等待区*/
-    if (state == 1)
+    if (state)
     {
+        qDebug()<<"111\n";
         /*1.1-1.2*/
         Request r=deleteRequest(number,mode);
         /*1.7-1.8*/
         add(r,2);
     }
     /*state=0，不在等待区，向充电桩发消息*/
-    else if (state == 0)
+    else
     {
+        qDebug()<<"send message"<<"\n";
         int descriptor = Global::mstr2Int[user->p[v].pileNo.toStdString()];
         std::string ret = "removeFromPileList/" + std::to_string(number) + "\t";
         QString msg=QString::fromStdString(ret);
