@@ -181,19 +181,19 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
 
 QString RequestController::changeRequest(int v, User *user,QString mode, double value)//更改请求，mode=0时，value为充电量；mode=1时，value为模式（慢0快1）
 {
-    int oldNumber;//旧充电号
-    int oldMode;//旧充电模式
-    oldNumber = user->p[v].queueNum;//getNumber()来自user.h
-    oldMode=user->p[v].mode;
-    /*mode=0*/
+    int oldNumber = user->p[v].queueNum;//旧充电号
+    int oldMode=user->p[v].mode;//旧充电模式
+    /*mode=capacity*/
     if (mode == "capacity")//修改充电量
     {
         user->p[v].capacity = value; // 修改user类中充电量信息
         changeCapacity(oldNumber,oldMode,value);//changeCapacity(oldNumber,value)来自list<request>操作
     }
-    /*mode=1*/
+    /*mode=mode*/
     else if (mode == "mode")//修改充电模式
     {
+        user->p[v].mode=(int)value;
+        return "yes";
         int newNumber = newQueueNum((int)value);
         Request r=deleteRequest(oldNumber,oldMode);//deleteNum(number,mode)来自list<request>操作
         char userID[8];
@@ -249,7 +249,6 @@ QString RequestController::changeRequest(int v, User *user,QString mode, double 
 //            }
 //        }
         //修改user类中车辆的信息，记录当前车辆的排队号、状态和所在充电桩号
-        user->p[v].mode=value;
         user->p[v].queueNum=newNumber;
         if(!flag){ //等待
             user->p[v].state="waiting";

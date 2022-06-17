@@ -41,7 +41,7 @@ void WorkWindow::get_state_recv(QString responce) // 更新状态
 {
     QStringList resp_list = responce.split('/');
     usr_state = resp_list.at(0);
-    usr_mode = resp_list.at(1);
+    usr_mode = resp_list.at(1) == "slow" ? "0" : "1";
     usr_capacity = resp_list.at(2);
     usr_battery = resp_list.at(3);
     if (usr_state == "free") {
