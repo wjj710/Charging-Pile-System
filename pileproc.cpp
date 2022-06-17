@@ -74,7 +74,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
             memcpy(s+5,(&p->chargingQueue[i]),sizeof(Request));
             s[5+sizeof(Request)]='\t';
             WaitForSingleObject(hMutex, INFINITE);
-            send(sock,s,6+sizeof(Request),NULL);
+            send(sock,s,8+sizeof(Request),NULL);
             ReleaseMutex(hMutex);
             WaitForSingleObject(wMutex, INFINITE);
             p->chargingQueue.erase(p->chargingQueue.begin()+i);
@@ -185,8 +185,8 @@ int main(int argc, char *argv[])
                         ret="yes\t";
                     }
                 }else if(s=="setTime"){
-                    t=*(time_t *)b;
-                    t1=t-t%((time_t)24*3600)+6*(time_t)3600;
+                    t=time(0);
+                    t1=6*3600;
                     ret="yes\t";
                 }else{
                     ret="no/no such request:"+to_string(i)+"\t";

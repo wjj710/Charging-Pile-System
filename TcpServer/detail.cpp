@@ -17,7 +17,7 @@ Detail::Detail(Request& request) {
     startChargingTime = QDateTime::fromSecsSinceEpoch(qint64(request.startChargingTime));
     endChargingTime = QDateTime::fromSecsSinceEpoch(qint64(request.endChargingTime));
     chargingFee = request.chargingFee;
-    serviceFee = request.serviceFee;
+    serviceFee = request.chargingCapacity*0.8;
     allFee = chargingFee + serviceFee;
 }
 

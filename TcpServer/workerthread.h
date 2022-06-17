@@ -181,9 +181,9 @@ public:
 
                     //先检查call请求有没有带参数Request，如果有就转为详单并写入文件
                     if(msgList.size()>1){
-                        char *s=msgList[1].toUtf8().data();
+                        char *s=Global::bytebuffer1[1].data();
                         Request r=*(Request *)s;
-                        qDebug()<<"###"<<r.chargingFee<<"\n";
+                        //qDebug()<<"###"<<r.chargingFee<<"\n";
 //                        Global::l2.append(r);
 //                        sendMsg("chargingToFinish\t",Global::mstr2Int[r.ownerID]); //给对应的用户发异步消息通知状态变化
                         Detail d(r);
@@ -193,14 +193,20 @@ public:
                         out<<"Detail of V"<<r.vNum<<":\n";
                         out<<"detailNo: "<<d.detailNo<<"\n";
                         out<<"generateTime: "<<d.generateTime.toString()<<"\n";
-                        out<<"pileNo: "<<d.pileNo<<"\n";
+                        out<<"pileNo: "<<QString::fromStdString(Global::mint2Str[descriptor])<<"\n";
                         out<<"chargingCapacity: "<<d.chargingCapacity<<"\n";
                         time_t h=d.chargingTime/3600;
                         time_t m=(d.chargingTime-h*3600)/60;
                         time_t s1=d.chargingTime-h*3600-m*60;
                         out<<"chargingTime: "<<h<<"h"<<m<<"m"<<s1<<"s"<<"\n";
-                        out<<"startChargingTime: "<<std::ctime(&r.startChargingTime)<<"\n";
-                        out<<"endChargingTime: "<<std::ctime(&r.endChargingTime)<<"\n";
+                        h=r.startChargingTime/3600;
+                        m=(r.startChargingTime-h*3600)/60;
+                        s1=r.startChargingTime-h*3600-m*60;
+                        out<<"startChargingTime: "<<h<<"h"<<m<<"m"<<s1<<"s"<<"\n";
+                        h=r.endChargingTime/3600;
+                        m=(r.endChargingTime-h*3600)/60;
+                        s1=r.endChargingTime-h*3600-m*60;
+                        out<<"endChargingTime: "<<h<<"h"<<m<<"m"<<s1<<"s"<<"\n";
                         out<<"chargingFee: "<<d.chargingFee<<"\n";
                         out<<"serviceFee: "<<d.serviceFee<<"\n";
                         out<<"allFee: "<<d.allFee<<"\n";

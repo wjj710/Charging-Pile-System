@@ -1,5 +1,6 @@
 #include "requestcontroller.h"
 #include "pilecontroller.h"
+#include <QDebug>
 
 #define MAX_REQUEST_NUM 1000
 int slowQueueNum=0;
@@ -92,7 +93,9 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
     if(!req){
         req=1;
         Global::t=time(0);
-        Global::t1=Global::t-Global::t%(24*3600)+6*3600;
+        Global::t1=6*3600;
+        qDebug()<<std::ctime(&Global::t)<<"\n";
+        qDebug()<<std::ctime(&Global::t1)<<"\n";
         //向所有充电桩发基准时间
         for(int i=0; i<Global::lp.size();i++){
             std::string pN=Global::lp.at(i);

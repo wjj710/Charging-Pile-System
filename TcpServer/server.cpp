@@ -46,6 +46,9 @@ void Server::slotsend(QByteArray pre_msg, QString msg,int descriptor){
         Global::condition.wakeAll();
     }else{
         Global::handleList.append(msgList);
+        if(msgList[0]=="call"){
+            Global::bytebuffer1=arrayList; //存放充完电的请求
+        }
     }
 }
 
