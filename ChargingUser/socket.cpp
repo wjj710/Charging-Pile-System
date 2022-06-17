@@ -44,6 +44,7 @@ void Socket::Disconnect()
 {
     server_socket->disconnectFromHost();
     server_socket = NULL;
+    emit socket_disconnect();
 }
 
 void Socket::MessageShow(QString str)

@@ -22,6 +22,7 @@ public slots:
     void get_queue_recv(QString responce);
     void get_detail_recv(QString responce);
     void get_bill_recv(QString responce);
+    void socket_disconnect();
 
 private slots:
     void on_submitRequest_clicked();
@@ -44,17 +45,9 @@ private slots:
 
     void on_carButton_clicked();
 
-    void on_spinBox_valueChanged(int arg1);
+    void on_carBox_valueChanged(int arg1);
 
 private:
-    int test_model[40] = {-1,0,0,1,1,0,0,1,0,1,
-                           0,1,1,1,1,0,1,0,0,1,
-                           1,1,1,1,0,0,0,0,1,0,
-                           0};
-    double test_amount[40]={0 ,40 ,30,100,120,20,20,110,20 ,105,
-                            10,110,90,110,95 ,10,60,10 ,7.5,75 ,
-                            95,95 ,70,80 ,5  ,15,20,25 ,30 ,30 ,
-                            10};
     Ui::WorkWindow *ui;
     QString usrID;              // 用户ID
     QString carNum;             // 车辆号
@@ -72,7 +65,16 @@ private:
     void EndCharging();         // 结束充电
     void PayBills();            // 支付账单
     void EnterCarNum();         // 输入车辆号
-    void CutoverCar();          // 切换车辆
+    void CutoverCar(int car);   // 切换车辆
+
+    int test_model[40] = {-1,0,0,1,1,0,0,1,0,1,
+                           0,1,1,1,1,0,1,0,0,1,
+                           1,1,1,1,0,0,0,0,1,0,
+                           0};
+    double test_amount[40]={0 ,40 ,30,100,120,20,20,110,20 ,105,
+                            10,110,90,110,95 ,10,60,10 ,7.5,75 ,
+                            95,95 ,70,80 ,5  ,15,20,25 ,30 ,30 ,
+                            10};
 };
 
 #endif // WORKWINDOW_H

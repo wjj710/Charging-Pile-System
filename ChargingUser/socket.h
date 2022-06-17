@@ -35,6 +35,7 @@ signals:
     void pass_queue_recv(QString recv); // 回复排队号
     void pass_detail_recv(QString recv); // 回复详单
     void pass_bill_recv(QString recv);   // 回复应付金额
+    void socket_disconnect();
 
 private:
     Ui::Socket *ui;
