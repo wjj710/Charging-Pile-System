@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
                     }
                 }else if(s=="setTime"){
                     t=*(time_t *)b;
-                    t1=t-t%(24*3600)+6*3600;
+                    t1=t-t%((time_t)24*3600)+6*(time_t)3600;
                     ret="yes\t";
                 }else{
                     ret="no/no such request:"+to_string(i)+"\t";

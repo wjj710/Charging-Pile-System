@@ -11,11 +11,11 @@ int Detail::detailCount = 0;
 Detail::Detail(Request& request) {
     detailNo = ++detailCount;
     generateTime = QDateTime::currentDateTime();
-    pileNo = getPileNo(QString::fromStdString(request.ownerID));
+    pileNo = Global::usr[0].p[request.vNum].pileNo;
     chargingCapacity = request.chargingCapacity;
-    chargingTime = int(request.endChargingTime - request.startChargingTime);
-    startChargingTime = QDateTime::fromSecsSinceEpoch(request.startChargingTime);
-    endChargingTime = QDateTime::fromSecsSinceEpoch(request.endChargingTime);
+    chargingTime = request.endChargingTime - request.startChargingTime;
+    startChargingTime = QDateTime::fromSecsSinceEpoch(qint64(request.startChargingTime));
+    endChargingTime = QDateTime::fromSecsSinceEpoch(qint64(request.endChargingTime));
     chargingFee = request.chargingFee;
     serviceFee = request.serviceFee;
     allFee = chargingFee + serviceFee;

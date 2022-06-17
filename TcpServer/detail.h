@@ -11,7 +11,7 @@ public:
     QDateTime generateTime;         // 生成时间
     QString pileNo;                 // 充电桩编号
     double chargingCapacity;        // 充电容量
-    int chargingTime;               // 充电时间，以秒为单位
+    time_t chargingTime;               // 充电时间，以秒为单位
     QDateTime startChargingTime;    // 充电开始时间
     QDateTime endChargingTime;      // 充电结束时间
     double chargingFee;             // 充电费用

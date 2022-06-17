@@ -2,12 +2,15 @@
 #define WORKERTHREAD_H
 #include <QThread>
 #include <QDebug>
+#include <QFile>
+#include <time.h>
 #include "global.h"
 #include "tcpclientsocket.h"
 #include "querycontroller.h"
 #include "pilecontroller.h"
 #include "requestcontroller.h"
 #include "usercontroller.h"
+#include "detail.h"
 
 /* 新建一个 WorkerThread 类继承于 QThread */
 class WorkerThread : public QThread
@@ -176,12 +179,33 @@ public:
                 }else if(msgList[0]=="call"){ //充电桩叫号
                     // qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
 
-                    //先检查call请求有没有带参数Request，如果有就加入l2
+                    //先检查call请求有没有带参数Request，如果有就转为详单并写入文件
                     if(msgList.size()>1){
                         char *s=msgList[1].toUtf8().data();
                         Request r=*(Request *)s;
-                        Global::l2.append(r);
-                        sendMsg("chargingToFinish\t",Global::mstr2Int[r.ownerID]); //给对应的用户发异步消息通知状态变化
+                        qDebug()<<"###"<<r.chargingFee<<"\n";
+//                        Global::l2.append(r);
+//                        sendMsg("chargingToFinish\t",Global::mstr2Int[r.ownerID]); //给对应的用户发异步消息通知状态变化
+                        Detail d(r);
+                        QFile file("detail.txt");
+                        file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
+                        QTextStream out(&file);
+                        out<<"Detail of V"<<r.vNum<<":\n";
+                        out<<"detailNo: "<<d.detailNo<<"\n";
+                        out<<"generateTime: "<<d.generateTime.toString()<<"\n";
+                        out<<"pileNo: "<<d.pileNo<<"\n";
+                        out<<"chargingCapacity: "<<d.chargingCapacity<<"\n";
+                        time_t h=d.chargingTime/3600;
+                        time_t m=(d.chargingTime-h*3600)/60;
+                        time_t s1=d.chargingTime-h*3600-m*60;
+                        out<<"chargingTime: "<<h<<"h"<<m<<"m"<<s1<<"s"<<"\n";
+                        out<<"startChargingTime: "<<std::ctime(&r.startChargingTime)<<"\n";
+                        out<<"endChargingTime: "<<std::ctime(&r.endChargingTime)<<"\n";
+                        out<<"chargingFee: "<<d.chargingFee<<"\n";
+                        out<<"serviceFee: "<<d.serviceFee<<"\n";
+                        out<<"allFee: "<<d.allFee<<"\n";
+                        out<<"\n";
+                        file.close();
                     }
                     pileController.call(Global::mint2Str[descriptor]);
                 }else if(msgList[0]=="adminLogon"){ //管理员登录，管理员端需要在建立连接后发此消息，获取初始化信息（此消息无参数）
