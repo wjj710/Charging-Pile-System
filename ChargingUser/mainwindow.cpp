@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 设置信号与槽
     // 窗口间传递信息
     connect(&start_window, &StartWindow::pass_usrID, &work_window, &WorkWindow::get_usrID);
+    connect(&Socket::Instance(), &Socket::socket_disconnect, &work_window, &WorkWindow::socket_disconnect);
     // socket传递回复
     connect(&Socket::Instance(), &Socket::pass_login_recv, &start_window, &StartWindow::get_login_recv); // 传递登录回复
     connect(&Socket::Instance(), &Socket::pass_logon_recv, &start_window, &StartWindow::get_logon_recv); // 传递注册回复

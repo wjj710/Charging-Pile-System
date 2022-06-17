@@ -11,7 +11,7 @@ public:
     QString pileNo;
     double capacity;   // 充电量
     double battery;    // 电池容量
-    car() { state = "free"; mode = 0; capacity = 0; battery = 0; }
+    car() { state = "free"; mode = 0; capacity = 0; battery = 1000; }
 };
 
 class User
