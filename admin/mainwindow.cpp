@@ -331,10 +331,10 @@ void MainWindow::on_GetInfo_clicked()
             text+="    充电模式：T\n";
         else
             text+="    充电模式：F\n";
-        int alreadycapacity=c->alreadyChargingCapacity;
-        text+="    *已冲电量："+QString::number(alreadycapacity)+"\n";
-        int nowfee=c->nowFee;
-        text+="    *当前费用："+QString::number(nowfee)+"\n";
+        double alreadycapacity=c->alreadyChargingCapacity;
+        text+="    *已冲电量："+QString::number(alreadycapacity,'g',5)+"\n";
+        double nowfee=c->nowFee;
+        text+="    *当前费用："+QString::number(nowfee,'g',5)+"\n";
     }
     ui->Info->setText(text);
 }
@@ -383,10 +383,10 @@ void MainWindow::on_GetAllInfo_clicked()
           //      text+="    充电模式：T\n";
           //  else
          //       text+="    充电模式：F\n";
-            int alreadycapacity=c->alreadyChargingCapacity;
-            text+="    *已冲电量："+QString::number(alreadycapacity)+"\n";
-            int nowfee=c->nowFee;
-            text+="    *当前费用："+QString::number(nowfee)+"\n";
+            double alreadycapacity=c->alreadyChargingCapacity;
+            text+="    *已冲电量："+QString::number(alreadycapacity,'g',5)+"\n";
+            double nowfee=c->nowFee;
+            text+="    *当前费用："+QString::number(nowfee,'g',5)+"\n";
         }
         text+="\n";
     }
@@ -555,10 +555,10 @@ void MainWindow::on_GetWaiting_clicked()
             text+="    *充电模式：T\n";
         else
             text+="    *充电模式：F\n";
-        int alreadycapacity=c->alreadyChargingCapacity;
-        text+="    已冲电量："+QString::number(alreadycapacity)+"\n";
-        int nowfee=c->nowFee;
-        text+="    当前费用："+QString::number(nowfee)+"\n";
+        double alreadycapacity=c->alreadyChargingCapacity;
+        text+="    已冲电量："+QString::number(alreadycapacity,'g',5)+"\n";
+        double nowfee=c->nowFee;
+        text+="    当前费用："+QString::number(nowfee,'g',5)+"\n";
         text+="\n";
     }
     ui->waiting->setText(text);

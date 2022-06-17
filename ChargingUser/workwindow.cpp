@@ -69,7 +69,7 @@ void WorkWindow::get_state_recv(QString responce) // 更新状态
         QString capacity = QString::number(test_amount[ui->carBox->value()],'g',5);
         qDebug()<<"capacity:"<<capacity<<"   Index:"<<test_model[ui->carBox->value()];
         ui->capacityEdit->setText(capacity);
-        ui->modeBox->setCurrentIndex(test_model[ui->carBox->value()]);
+        ui->modeBox->setCurrentIndex(!test_model[ui->carBox->value()]);
     }
 }
 
