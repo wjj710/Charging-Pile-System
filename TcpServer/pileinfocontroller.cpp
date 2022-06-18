@@ -110,7 +110,7 @@ void PileInfoController::getWaiting(int admin_socketNo)//返回等候区的车�
         if(Global::l_priority[i].chargingMode==0) mode+="T";
         else mode+="F";
         mode += QString::number(Global::l_priority[i].queueNum);
-        strcpy(car.ownerID, Global::l_priority[i].ownerID);
+        strcpy(car.ownerID, Global::usr[0].getID().toStdString().c_str());
         car.vNum = Global::mq2v.at(mode.toStdString());
         car.batteryCapacity=Global::l_priority[i].batteryCapacity;
         car.requestChargingCapacity = Global::l_priority[i].requestChargingCapacity;
@@ -128,7 +128,7 @@ void PileInfoController::getWaiting(int admin_socketNo)//返回等候区的车�
         if(Global::l1[i].chargingMode==0) mode+="T";
         else mode+="F";
         mode += QString::number(Global::l1[i].queueNum);
-        strcpy(car.ownerID, Global::l1[i].ownerID);
+        strcpy(car.ownerID, Global::usr[0].getID().toStdString().c_str());
         car.vNum = Global::mq2v.at(mode.toStdString());
         car.batteryCapacity=Global::l1[i].batteryCapacity;
         car.requestChargingCapacity = Global::l1[i].requestChargingCapacity;

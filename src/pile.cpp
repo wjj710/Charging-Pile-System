@@ -98,7 +98,7 @@ string Pile::select(int mode)
         WaitForSingleObject(wMutex, INFINITE);
         for(int i=0; i<chargingQueue.size(); i++){
             CarInfo c;
-            strcpy(c.ownerID, chargingQueue[i].ownerID);
+            strcpy(c.ownerID, "123");
             c.vNum=chargingQueue[i].vNum;
             c.batteryCapacity=chargingQueue[i].batteryCapacity;
             c.requestChargingCapacity=chargingQueue[i].requestChargingCapacity;

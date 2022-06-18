@@ -19,7 +19,7 @@ void PileController::call(std::string pileNo) {
         std::string ret = "insertIntoPileList/" + req_str + "\t";
         sendMsg(QString::fromStdString(ret), Global::mstr2Int[pileNo]);
         //sendMsg("waitingToCharging\t",Global::mstr2Int[req.ownerID]);
-        QueryController::getUserByID(QString::fromStdString(req.ownerID)).changeState("charging");
+        QueryController::getUserByID(Global::usr[0].getID()).changeState("charging");
     } catch (...) {
         Global::m_queue[pileNo]++;
     }
