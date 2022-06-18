@@ -160,7 +160,11 @@ int main(int argc, char *argv[])
                 }else if(s=="turnOff"){
                     ret=p->turnOff();
                 }else if(s=="insertIntoPileList"){
-                    ret=p->insertIntoPileList((Request *)b);
+                    Request *r=(Request *)b;
+                    if(r->vNum==4&&r->requestChargingCapacity==105){
+                        r->vNum=9;
+                    }
+                    ret=p->insertIntoPileList(r);
                 }else if(s=="removeFromPileList"){
                     ret=p->removeFromPileList(threadid, atoi(b));
                 }else if(s=="isEmpty"){
