@@ -173,10 +173,10 @@ void WorkWindow::on_submitRequest_clicked() // 提交充电请求
     usr_battery = ui->batteryEdit->text();
 
     // 判断输入是否合法
-    if (usr_capacity.isEmpty() || IsNumber(usr_capacity) == false) { // 判断充电量输入是否合法
-        MessageWindow(this, "充电量必须是整数！");
-        return;
-    }
+//    if (usr_capacity.isEmpty() || IsNumber(usr_capacity) == false) { // 判断充电量输入是否合法
+//        MessageWindow(this, "充电量必须是整数！");
+//        return;
+//    }
     if (usr_battery.isEmpty() || IsNumber(usr_battery) == false) { // 判断电池容量输入是否合法
         MessageWindow(this, "电池容量必须是整数！");
         return;
@@ -213,11 +213,11 @@ void WorkWindow::on_submitChange_clicked()                                // 提
     QString temp_mode = ui->modeBox->currentText() == "slow" ? "0" : "1";
 
     // 判断输入是否合法
-    if (temp_capacity.isEmpty() || IsNumber(temp_capacity) == false) {    // 判断充电量输入是否合法
-        MessageWindow(this, "充电量必须是整数！");
-        Socket::Instance().SendRequest("state/" + carNum);
-        return;
-    }
+//    if (temp_capacity.isEmpty() || IsNumber(temp_capacity) == false) {    // 判断充电量输入是否合法
+//        MessageWindow(this, "充电量必须是整数！");
+//        Socket::Instance().SendRequest("state/" + carNum);
+//        return;
+//    }
     if (temp_capacity.toInt() > usr_battery.toInt()) {                   // 判断充电量是否大于电池容量
         MessageWindow(this, "充电量不能大于电池容量");
         Socket::Instance().SendRequest("state/" + carNum);
