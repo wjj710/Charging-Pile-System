@@ -129,6 +129,8 @@ QString RequestController::startRequest(int v, User *user,int mode, double capac
     for(int i=0;i<8;i++) if(i<user->getID().length())
     {
         userID[i]= user->getID().at(i).unicode();
+    } else {
+        userID[i]=0;
     }
     struct Request temp={
         number, v,{userID[0],userID[1],userID[2],userID[3],userID[4],userID[5],userID[6],userID[7]}, mode, capacity,0,batteryCapacity,0,0,0,0,0
