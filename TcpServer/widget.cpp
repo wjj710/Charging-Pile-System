@@ -67,11 +67,11 @@ void Widget::on_malfunction_clicked()
     s+=(k+"\t");
     int d=Global::mstr2Int[t+u];
     emit sendserver(QString::fromStdString(s),d);
-    ui->malfunction->setDisabled(true);
-    ui->recover->setEnabled(true);
-    ui->pileType->setDisabled(true);
-    ui->pileNumber->setDisabled(true);
-    ui->dispatchMethod->setDisabled(true);
+//    ui->malfunction->setDisabled(true);
+//    ui->recover->setEnabled(true);
+//    ui->pileType->setDisabled(true);
+//    ui->pileNumber->setDisabled(true);
+//    ui->dispatchMethod->setDisabled(true);
 }
 
 //充电桩故障恢复
@@ -81,11 +81,11 @@ void Widget::on_recover_clicked()
     int d=Global::mstr2Int[Global::malfunctionPileNo];
     Global::malfunctionPileNo="";
     emit sendserver(QString::fromStdString(s),d);
-    ui->malfunction->setEnabled(true);
-    ui->recover->setDisabled(true);
-    ui->pileType->setEnabled(true);
-    ui->pileNumber->setEnabled(true);
-    ui->dispatchMethod->setEnabled(true);
+//    ui->malfunction->setEnabled(true);
+//    ui->recover->setDisabled(true);
+//    ui->pileType->setEnabled(true);
+//    ui->pileNumber->setEnabled(true);
+//    ui->dispatchMethod->setEnabled(true);
 }
 
 

@@ -160,22 +160,28 @@ public:
                 }else if (msgList[0]=="getWaiting") {
                     pileInfoController.getWaiting(descriptor);
                 }else if (msgList[0]=="malfunction") { //服务器前端发来的充电桩故障
-                    //首先通知充电桩进程有故障
+                    //首先通知充电桩进程有故障，此时有阻塞
                     QString msg="malfunction\t";
                     sendMsg(msg,descriptor);
                     // Global::loop.exec();
                     // if(Global::buffer[0]=="no"){ //如果充电桩返回错误，则忽略此次请求
                     //     continue;
                     // }
+                    Global::mutex.lock();
+                    Global::condition.wait(&Global::mutex);
+                    Global::mutex.unlock();
                     pileController.malfunction(Global::mint2Str[descriptor],msgList[1].toInt());
                 }else if (msgList[0]=="recover") { //服务器前端发来的故障恢复
-                    //首先通知充电桩进程故障恢复
+                    //首先通知充电桩进程故障恢复，此时有阻塞
                     QString msg="malfunctionRecover\t";
                     sendMsg(msg,descriptor);
                     // Global::loop.exec();
                     // if(Global::buffer[0]=="no"){ //如果充电桩返回错误，则忽略此次请求
                     //     continue;
                     // }
+                    Global::mutex.lock();
+                    Global::condition.wait(&Global::mutex);
+                    Global::mutex.unlock();
                     pileController.malfunction(Global::mint2Str[descriptor],2);
                 }else if(msgList[0]=="call"){ //充电桩叫号
                     // qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
