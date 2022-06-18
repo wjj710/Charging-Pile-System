@@ -111,7 +111,7 @@ std::string PileController::getIdlePile(int isFastCharge) {
     int l = 0;
     std::string ret = "";
     for(const auto &it : Global::m_queue) {
-        if(isFastCharge==(it.first[0]=='F')&&it.second>l) {
+        if(isFastCharge==(it.first[0]=='F')&&it.second>l&&Global::m_on[it.first]) {
             ret=it.first;
             l=it.second;
         }
