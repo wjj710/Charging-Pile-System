@@ -182,7 +182,7 @@ public:
                     Global::mutex.lock();
                     Global::condition.wait(&Global::mutex);
                     Global::mutex.unlock();
-                    pileController.malfunction(Global::mint2Str[descriptor],2);
+                    pileController.malfunction(Global::mint2Str[descriptor],3);
                 }else if(msgList[0]=="call"){ //充电桩叫号
                     // qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
 
