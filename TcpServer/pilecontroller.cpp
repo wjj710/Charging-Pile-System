@@ -82,7 +82,7 @@ QList<Request> PileController::getAllRequestFromPile(std::string pileNo) {
     Global::condition.wait(&Global::mutex);
     QList<Request> ret;
     if(Global::res=="yes"&&Global::bytebuffer.size()) {
-        for(Request *tmp=(Request *)(&Global::bytebuffer); tmp<(Request *)(Global::bytebuffer.end()); tmp+=sizeof(Request)) {
+        for(Request *tmp=(Request *)(Global::bytebuffer.begin()); tmp<(Request *)(Global::bytebuffer.end()); tmp+=sizeof(Request)) {
             Global::m_queue[pileNo]++;
             ret.append(*tmp);
         }
