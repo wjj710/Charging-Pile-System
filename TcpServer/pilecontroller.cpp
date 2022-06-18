@@ -81,8 +81,8 @@ QList<Request> PileController::getAllRequestFromPile(std::string pileNo) {
     Global::mutex.lock();
     Global::condition.wait(&Global::mutex);
     QList<Request> ret;
-    if(Global::bytebuffer[0]=="yes") {
-        for(Request *tmp=(Request *)(&Global::bytebuffer[1]); tmp<(Request *)(Global::bytebuffer[1].end()); tmp+=sizeof(Request)) {
+    if(Global::res=="yes"&&Global::bytebuffer.size()) {
+        for(Request *tmp=(Request *)(&Global::bytebuffer); tmp<(Request *)(Global::bytebuffer.end()); tmp+=sizeof(Request)) {
             Global::m_queue[pileNo]++;
             ret.append(*tmp);
         }
@@ -101,6 +101,7 @@ QString PileController::handleNewRequest(Request req, QList<Request> & fallback_
     }
     else {
         fallback_list.append(req);
+        qDebug()<<"V"<<req.vNum<<" "<<req.requestChargingCapacity<<" "<<req.batteryCapacity<<"\n";
     }
     return QString::fromStdString(pileNo);
 }

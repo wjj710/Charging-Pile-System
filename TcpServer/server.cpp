@@ -34,20 +34,46 @@ void Server::slotshow(QString msg, QHostAddress addr,int port,bool send)
     emit showserver(msg,addr,port,send);
 }
 
-void Server::slotsend(QByteArray pre_msg, QString msg,int descriptor){
+void Server::slotsend(QByteArray pre_msg,int descriptor){
 
-    QStringList msgList = msg.split("/");
-    msgList.append(QString::number(descriptor));
-    QList<QByteArray> arrayList = pre_msg.split('/');
-    if(msgList[0]=="yes" || msgList[0]=="no"){ //说明不是请求，是充电桩的返回消息
-        Global::buffer=msgList; //将收到的消息放到缓冲区
-        Global::bytebuffer=arrayList;
+//    QStringList msgList = msg.split("/");
+//    msgList.append(QString::number(descriptor));
+    //QList<QByteArray> arrayList = pre_msg.split('/');
+    int k=0; //记录包头长度
+    for(int i=0; i<pre_msg.size();i++){
+        char c=pre_msg.at(i);
+        if(c=='/'){
+            k=i;
+            break;
+        }
+    }
+    QString s;
+    if(k>0){//说明有返回消息
+       s=pre_msg.left(k);
+       if(s=="call"){
+           Global::bytebuffer1=pre_msg.right(pre_msg.size()-k-1);
+       }else{
+           Global::bytebuffer=pre_msg.right(pre_msg.size()-k-1);
+       }
+    }else{
+       s=pre_msg;
+    }
+    if(s=="yes" || s=="no"){ //说明不是请求，是充电桩的返回消息
+        //Global::buffer=msgList; //将收到的消息放到缓冲区
+        //Global::bytebuffer=arrayList;
         //emit loopquit(); //向处理线程发信号，通知loop退出
+        Global::res=pre_msg.left(k);
         Global::condition.wakeAll();
     }else{
-        if(msgList[0]=="call"){
-            Global::bytebuffer1=arrayList; //存放充完电的请求
+//        if(s=="call"){
+//            Global::bytebuffer1=arrayList; //存放充完电的请求
+//        }
+        QStringList msgList;
+        QList<QByteArray> arrayList = pre_msg.split('/');
+        for(int i=0;i<arrayList.size();i++){
+            msgList.append(arrayList[i]);
         }
+        msgList.append(QString::number(descriptor));
         Global::handleList.append(msgList);
     }
 }

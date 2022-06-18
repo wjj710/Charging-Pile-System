@@ -109,7 +109,7 @@ public:
                     } catch (const char *msg) {
                         ans = "no/" + QString::fromStdString(msg) + "\t";
                     }
-                }else if (msgList[0]=="turnOnPile") {
+                }/*else if (msgList[0]=="turnOnPile") {
                     if(msgList[1]=="0")
                         for(auto & it : Global::lp) {
                             Global::m_on[it]=true;
@@ -151,7 +151,7 @@ public:
                         else sendMsg("no/"+Global::bytebuffer[1]+"\t", descriptor);
                         Global::mutex.unlock();
                     }
-                }else if (msgList[0]=="getPileInfo") {
+                }*/else if (msgList[0]=="getPileInfo") {
                     pileInfoController.generatePileInfo(msgList[1].toStdString(), descriptor);
                 }else if (msgList[0]=="getCarInfo") {
                     pileInfoController.generateCarInfo(msgList[1].toStdString(), descriptor);
@@ -188,7 +188,7 @@ public:
 
                     //先检查call请求有没有带参数Request，如果有就转为详单并写入文件
                     if(msgList.size()>1){
-                        char *s=Global::bytebuffer1[1].data();
+                        char *s=Global::bytebuffer1.data();
                         Request r=*(Request *)s;
                         //qDebug()<<"###"<<r.chargingFee<<"\n";
 //                        Global::l2.append(r);
@@ -229,7 +229,7 @@ public:
                     Global::mstr2Int[msgList[1].toStdString()]=descriptor;
                     Global::m_on[msgList[1].toStdString()] = true;
                 }else{
-                    ans = "no/message format error\t";
+                    ans = "no/message format error/"+msgList[0]+"\t";
                 }
                 if(ans=="") continue; //如果ans为空，说明不需要发返回消息
                 sendMsg(ans,descriptor); //发送同步返回消息

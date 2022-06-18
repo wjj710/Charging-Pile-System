@@ -12,11 +12,10 @@ public:
     Server(QObject *parent = 0, int port = 0);
 protected:
     void incomingConnection(qintptr socketDescriptor);//只要出现一个新的连接，就会自动调用这个函数
-protected slots:
+public slots:
     void slotshow(QString, QHostAddress,int,bool);//用来处理tcpclient发过来的信号
     void slotclientdisconnect(int); //用来处理客户端断开连接
-    void slotsend(QByteArray,QString,int); //用来处理tcpsocket发来的报文，并把请求加入处理队列
-public slots:
+    void slotsend(QByteArray,int); //用来处理tcpsocket发来的报文，并把请求加入处理队列
     void init(int fastPileNum, int tricklePileNum, int waitingSize, int chargingQueueLen);
 signals:
     //void loopquit();

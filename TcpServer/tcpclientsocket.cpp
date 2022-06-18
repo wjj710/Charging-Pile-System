@@ -1,5 +1,6 @@
 #include "tcpclientsocket.h"
 #include <QDebug>
+#include <ctype.h>
 
 TcpClientSocket::TcpClientSocket(QObject *parent)
 {
@@ -16,14 +17,45 @@ void TcpClientSocket::receivedata()
     QByteArray array = readAll();
     qDebug()<<"receive bytearray"<<array<<Qt::endl;
     QList<QByteArray> arrayList = array.split('\t'); //分解各个报文
-    QString msg = array;
-    QStringList msgList = msg.split("\t"); //分解各个报文
-    for(int i=0; i<msgList.size(); i++){
-        QString ans=msgList.at(i);
-        QByteArray pre_ans=arrayList.at(i);
-        if(ans.length()!=0){
-            emit showserver(ans, peerAddress(), peerPort(),0);// 从客户端接受，末尾设为0
-            emit sendserver(pre_ans,ans,this->socketDescriptor()); //将报文发送给服务器
+    QList<QByteArray> aList;
+    int flag=0; //如果是第一个包，则flag为0
+    QByteArray res="";
+    for(int i=0; i<arrayList.size();i++){
+        QByteArray q1=arrayList.at(i);
+        int k=0; //记录前面0字节的个数
+        for(int i=0;i<q1.size();i++){
+            if(q1[i]!='\0'){
+                k=i;
+                break;
+            }
+        }
+        QByteArray q;
+        if(q1.size()-k>2&&isalpha(q1.data()[k])&&isalpha(q1.data()[k+1])){
+            q=q1.right(q1.size()-k); //如果是下一个包，去掉前面的0字节
+        }else{
+            q=q1;
+        }
+        if(q=="") continue;
+        if(q.size()>=2&&isalpha(q.data()[0])&&isalpha(q.data()[1])){ //如果前两个字符都是字母，说明是包头
+            if(flag){ //说明不是第一个包，要把前一个包加入aList
+                aList.append(res);
+            }else{
+                flag=1;
+            }
+            res=q;
+        }else{ //否则是包体，加入res中
+            res+=('\t'+q);
+        }
+    }
+    aList.append(res);
+
+//    QString msg = array;
+//    QStringList msgList = msg.split("\t"); //分解各个报文
+    for(int i=0; i<aList.size(); i++){
+        QByteArray pre_ans=aList.at(i);
+        if(pre_ans.length()!=0){
+            emit showserver(pre_ans, peerAddress(), peerPort(),0);// 从客户端接受，末尾设为0
+            emit sendserver(pre_ans,this->socketDescriptor()); //将报文发送给服务器
         }
     }
 }

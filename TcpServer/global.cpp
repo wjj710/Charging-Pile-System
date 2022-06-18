@@ -11,8 +11,9 @@ std::map<std::string,int> Global::mq2v;
 time_t Global::t; //测试基准时间
 time_t Global::t1; //样例基准时间
 QList<QStringList> Global::handleList; //处理队列
-QStringList Global::buffer;  //存放充电桩给服务器的返回消息
-QList<QByteArray> Global::bytebuffer;//存放充电桩返回消息，保留原格式
+QByteArray Global::bytebuffer;//存放充电桩返回消息，保留原格式
+QByteArray Global::bytebuffer1; //call后跟的消息
+QByteArray Global::res; //yes或no
 QList<TcpClientSocket*> Global::tcpclientsocketlist; //服务器中的socket队列
 int Global::waitingAreaSize=0; //等候区大小
 int Global::chargingQueueLen=0; //充电桩队列长度
@@ -33,4 +34,4 @@ QList<std::string> Global::l_call; // 存放未得到反馈的充电桩编号
 
 std::map<std::string,int> Global::m_queue;
 std::map<std::string,bool> Global::m_on;
-QList<QByteArray> Global::bytebuffer1;
+

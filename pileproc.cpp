@@ -143,17 +143,22 @@ int main(int argc, char *argv[])
                 char c=sz[i];
                 sz[i++]='\0'; //移动指针并且将报头末尾置为\0
                 strcpy(h,sz+sth);
+                string s=h;
                 if(c=='/'){ //说明有参数
                     int count=0; //记录参数占多少个字节
                     int stb=i; //记录参数的起始位置
-                    while(sz[i]!='\t'){
-                        i++;
-                        count++;
+                    if(s=="insertIntoPileList"){
+                        count=sizeof(Request);
+                        i+=count;
+                    }else{
+                        while(sz[i]!='\t'){
+                            i++;
+                            count++;
+                        }
                     }
                     i++; //指针移到下一个报文的开始处
                     memcpy(b,sz+stb,count);
                 }
-                string s=h;
                 string ret=""; //用来存放调用方法的返回值
                 if(s=="turnOn"){
                     ret=p->turnOn();
@@ -161,9 +166,6 @@ int main(int argc, char *argv[])
                     ret=p->turnOff();
                 }else if(s=="insertIntoPileList"){
                     Request *r=(Request *)b;
-                    if(r->vNum==4&&r->requestChargingCapacity==105){
-                        r->vNum=9;
-                    }
                     ret=p->insertIntoPileList(r);
                 }else if(s=="removeFromPileList"){
                     ret=p->removeFromPileList(threadid, atoi(b));

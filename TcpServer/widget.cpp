@@ -18,14 +18,15 @@ Widget::Widget(QWidget *parent)
     ui->pileType->addItems(strlist1);
     //设置调度方式下拉框
     QStringList strlist2;
-    strlist1<<"优先级调度"<<"时间顺序调度";
-    ui->pileType->addItems(strlist2);
+    strlist2<<"优先级调度"<<"时间顺序调度";
+    ui->dispatchMethod->addItems(strlist2);
     //恢复按钮刚开始无效
-    ui->recover->setDisabled(true);
+    //ui->recover->setDisabled(true);
 
    // connect(server, &Server::loopquit, workerThread, &WorkerThread::loopquit,Qt::DirectConnection);
     connect(server, &Server::showserver, this, &Widget::slotshow);
     connect(workerThread, &WorkerThread::showserver, this, &Widget::slotshow);
+    connect(this, &Widget::sendserver, server, &Server::slotsend);
 }
 
 Widget::~Widget()
@@ -64,9 +65,9 @@ void Widget::on_malfunction_clicked()
     string t=ui->pileType->currentIndex()?"T":"F";
     string u=to_string(ui->pileNumber->value());
     string k=ui->dispatchMethod->currentIndex()?"2":"1";
-    s+=(k+"\t");
+    s+=k;
     int d=Global::mstr2Int[t+u];
-    emit sendserver(QString::fromStdString(s),d);
+    emit sendserver(QByteArray::fromStdString(s),d);
 //    ui->malfunction->setDisabled(true);
 //    ui->recover->setEnabled(true);
 //    ui->pileType->setDisabled(true);
@@ -77,10 +78,12 @@ void Widget::on_malfunction_clicked()
 //充电桩故障恢复
 void Widget::on_recover_clicked()
 {
-    string s="recover\t";
-    int d=Global::mstr2Int[Global::malfunctionPileNo];
-    Global::malfunctionPileNo="";
-    emit sendserver(QString::fromStdString(s),d);
+    string s="recover";
+    string t=ui->pileType->currentIndex()?"T":"F";
+    string u=to_string(ui->pileNumber->value());
+    int d=Global::mstr2Int[t+u];
+    //Global::malfunctionPileNo="";
+    emit sendserver(QByteArray::fromStdString(s),d); //和malfunction格式一致，只不过没参数
 //    ui->malfunction->setEnabled(true);
 //    ui->recover->setDisabled(true);
 //    ui->pileType->setEnabled(true);

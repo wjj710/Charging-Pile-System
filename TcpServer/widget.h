@@ -31,6 +31,6 @@ private slots:
 
 signals:
     void sendinit(int, int, int, int);
-    void sendserver(QString,int);
+    void sendserver(QByteArray,int);
 };
 #endif // WIDGET_H

@@ -27,8 +27,10 @@ public:
     static time_t t; //测试基准时间
     static time_t t1; //样例基准时间
     static QList<QStringList> handleList; //处理队列
-    static QStringList buffer;  //存放充电桩给服务器的返回消息
-    static QList<QByteArray> bytebuffer;//存放充电桩返回消息，保留原格式
+    //static QStringList buffer;  //存放充电桩给服务器的返回消息
+    static QByteArray bytebuffer;//存放充电桩返回消息，保留原格式
+    static QByteArray bytebuffer1; //call后跟的消息
+    static QByteArray res; //yes或no
     static QList<TcpClientSocket*> tcpclientsocketlist; //服务器中的socket队列
     static int waitingAreaSize; //等候区大小
     static int chargingQueueLen; //充电桩队列长度
@@ -48,7 +50,7 @@ public:
     static QList<std::string> l_call; // 存放未得到反馈的充电桩编号
     static std::map<std::string,int> m_queue;
     static std::map<std::string,bool> m_on;
-    static QList<QByteArray> bytebuffer1;
+    //static QList<QByteArray> bytebuffer1;
 };
 
 #endif // GLOBAL_H

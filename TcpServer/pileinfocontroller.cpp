@@ -30,8 +30,8 @@ void PileInfoController::generatePileInfo(std::string pileNo, int admin_socketNo
     //ans += Global::buffer[1]; //返回给服务器的消息，让服务器转发给管理员
     //PileInfo* pileinfo=reinterpret_cast<PileInfo *>(Global::bytebuffer[1].data());
     //qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
-    qDebug()<<Global::bytebuffer[1];
-    sendArrayMsg(Global::bytebuffer[1], admin_socketNo);
+    qDebug()<<Global::bytebuffer;
+    sendArrayMsg(Global::bytebuffer, admin_socketNo);
     Global::mutex.unlock();
 }
 
@@ -61,8 +61,8 @@ void PileInfoController::generateCarInfo(std::string pileNo,int admin_socketNo) 
     //ans += Global::buffer[1]; //返回给服务器的消息，让服务器转发给管理员
     //PileInfo* pileinfo=reinterpret_cast<PileInfo *>(Global::bytebuffer[1].data());
     //qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
-    qDebug()<<Global::bytebuffer[1];
-    sendArrayMsg(Global::bytebuffer[1].prepend("yes/"), admin_socketNo);
+    qDebug()<<Global::bytebuffer;
+    sendArrayMsg(Global::bytebuffer.prepend("yes/"), admin_socketNo);
     Global::mutex.unlock();
 }
 void PileInfoController::getReport(std::string pileNo,int admin_socketNo)//生成报表，供服务器调用
@@ -91,8 +91,8 @@ void PileInfoController::getReport(std::string pileNo,int admin_socketNo)//生�
     //ans += Global::buffer[1]; //返回给服务器的消息，让服务器转发给管理员
     //PileInfo* pileinfo=reinterpret_cast<PileInfo *>(Global::bytebuffer[1].data());
     //qDebug()<<pileinfo->workingState<<" "<<pileinfo->totalChargingNumber<<" "<<pileinfo->totalChargingTime<<" "<<pileinfo->totalChargingCapacity;
-    qDebug()<<Global::bytebuffer[1];
-    sendArrayMsg(Global::bytebuffer[1], admin_socketNo);
+    qDebug()<<Global::bytebuffer;
+    sendArrayMsg(Global::bytebuffer, admin_socketNo);
     Global::mutex.unlock();
 }
 void PileInfoController::getWaiting(int admin_socketNo)//返回等候区的车辆信息，即l1和l_priority
@@ -111,7 +111,7 @@ void PileInfoController::getWaiting(int admin_socketNo)//返回等候区的车�
         else mode+="F";
         mode += QString::number(Global::l_priority[i].queueNum);
         strcpy(car.ownerID, Global::usr[0].getID().toStdString().c_str());
-        car.vNum = Global::mq2v.at(mode.toStdString());
+        car.vNum = Global::l_priority[i].vNum;
         car.batteryCapacity=Global::l_priority[i].batteryCapacity;
         car.requestChargingCapacity = Global::l_priority[i].requestChargingCapacity;
         car.queueTime = time(0)-Global::l_priority[i].requestTime;
@@ -129,7 +129,7 @@ void PileInfoController::getWaiting(int admin_socketNo)//返回等候区的车�
         else mode+="F";
         mode += QString::number(Global::l1[i].queueNum);
         strcpy(car.ownerID, Global::usr[0].getID().toStdString().c_str());
-        car.vNum = Global::mq2v.at(mode.toStdString());
+        car.vNum = Global::l1[i].vNum;
         car.batteryCapacity=Global::l1[i].batteryCapacity;
         car.requestChargingCapacity = Global::l1[i].requestChargingCapacity;
         car.queueTime = time(0)-Global::l1[i].requestTime;
@@ -140,7 +140,7 @@ void PileInfoController::getWaiting(int admin_socketNo)//返回等候区的车�
         std::string k((char *)(&car), sizeof(CarInfo));
         ans+=k;
     }
-    sendArrayMsg(QString::fromStdString(ans).toLatin1(), admin_socketNo);
+    sendArrayMsg(QByteArray::fromStdString(ans), admin_socketNo);
 }
 
 void PileInfoController::sendArrayMsg(QByteArray msg, int descriptor){//向指定描述符对应的socket发消息
