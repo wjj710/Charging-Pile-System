@@ -58,12 +58,12 @@ void PileController::malfunction(std::string pileNo, int mode) {
     }
     if(mode==2||mode==3) {
         Global::m_on[pileNo] = mode==2?false:true;
-        QList<Request> l_req;
+        QList<Request> l_req = Global::l_priority;
+        Global::l_priority.clear();
         for(const auto &it: Global::lp) {
             if(Global::m_on[it] && it[0] == pileNo[0]) {
                 QList<Request> reqs = getAllRequestFromPile(it);
                 for(const auto &req : reqs) {
-                    Global::m_queue[it]++;
                     l_req.append(req);
                 }
             }
@@ -72,6 +72,7 @@ void PileController::malfunction(std::string pileNo, int mode) {
         for(const auto &req : l_req) {
             handleNewRequest(req, Global::l_priority);
         }
+        PileController::flushQueue(Global::l1);
     }
     return;
 }
@@ -82,9 +83,9 @@ QList<Request> PileController::getAllRequestFromPile(std::string pileNo) {
     Global::condition.wait(&Global::mutex);
     QList<Request> ret;
     if(Global::res=="yes"&&Global::bytebuffer.size()) {
-        for(Request *tmp=(Request *)(Global::bytebuffer.begin()); tmp<(Request *)(Global::bytebuffer.end()); tmp+=sizeof(Request)) {
+        for(auto it = Global::bytebuffer.begin(); it != Global::bytebuffer.end(); it += sizeof(Request)) {
             Global::m_queue[pileNo]++;
-            ret.append(*tmp);
+            ret.append(*(Request *)it);
         }
     }
     Global::mutex.unlock();
@@ -111,7 +112,7 @@ std::string PileController::getIdlePile(int isFastCharge) {
     int l = 0;
     std::string ret = "";
     for(const auto &it : Global::m_queue) {
-        if(isFastCharge==(it.first[0]=='F')&&it.second>l) {
+        if(isFastCharge==(it.first[0]=='F')&&it.second>l&&Global::m_on[it.first]) {
             ret=it.first;
             l=it.second;
         }
@@ -119,6 +120,15 @@ std::string PileController::getIdlePile(int isFastCharge) {
     if(l) Global::m_queue[ret]--;
     return ret;
 }
+
+void PileController::flushQueue(QList<Request> &l) {
+    QList<Request> l_req = l;
+    l.clear();
+    for(const auto &req : l_req) {
+        handleNewRequest(req, l);
+    }
+}
+
 
 void PileController::sendMsg(QString msg, int descriptor) {
     for(int i = 0; i < Global::tcpclientsocketlist.count(); i++)

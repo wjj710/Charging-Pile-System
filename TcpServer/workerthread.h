@@ -182,7 +182,7 @@ public:
                     Global::mutex.lock();
                     Global::condition.wait(&Global::mutex);
                     Global::mutex.unlock();
-                    pileController.malfunction(Global::mint2Str[descriptor],2);
+                    pileController.malfunction(Global::mint2Str[descriptor],3);
                 }else if(msgList[0]=="call"){ //充电桩叫号
                     // qDebug()<<"handlesize"<<Global::handleList.size()<<Qt::endl;
 
@@ -220,7 +220,8 @@ public:
                         out<<"\n";
                         file.close();
                     }
-                    pileController.call(Global::mint2Str[descriptor]);
+                    if(Global::m_on[Global::mint2Str[descriptor]]) pileController.call(Global::mint2Str[descriptor]);
+                    else Global::m_queue[Global::mint2Str[descriptor]]++;
                 }else if(msgList[0]=="adminLogon"){ //管理员登录，管理员端需要在建立连接后发此消息，获取初始化信息（此消息无参数）
                     ans="yes/"+QString::number(Global::fastChargingPileNum)+"/"+QString::number(Global::trickleChargingPileNum)
                         +"/"+QString::number(Global::waitingAreaSize)+"/"+QString::number(Global::chargingQueueLen)+"\t";

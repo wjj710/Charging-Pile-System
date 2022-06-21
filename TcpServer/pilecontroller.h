@@ -19,6 +19,7 @@ public:
     Request getRequest(std::string);
     static QString handleNewRequest(Request, QList<Request>&);
     static std::string getIdlePile(int);
+    static void flushQueue(QList<Request> &);
 
     static bool cmpRequest(Request, Request);
 
