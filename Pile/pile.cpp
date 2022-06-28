@@ -1,5 +1,5 @@
-#include "../headers/Pile.h"
-#include "../headers/PileInfo.h"
+#include "Pile.h"
+#include "PileInfo.h"
 #include <stdlib.h>
 
 extern HANDLE wMutex;

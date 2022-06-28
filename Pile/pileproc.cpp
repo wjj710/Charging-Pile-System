@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <ctype.h>
-#include "headers/Pile.h"
+#include "Pile.h"
 #define MAXLEN 1000
 #pragma comment (lib, "ws2_32.lib")  //加载 ws2_32.dll
 
