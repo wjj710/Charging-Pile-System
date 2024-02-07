@@ -12,4 +12,4 @@ Visual Studio Code, Qt Creator, MinGW 64bit
 g++ -o pileproc pileproc.cpp pile.cpp -lws2_32
 ```
 （2）将pileproc.exe所在目录加入系统环境变量。<br />
-（3）使用Qt Creator编译并运行TcpServer（服务器端），ChargingUser（客户端）和Admin（管理员端）。
+（3）使用Qt Creator编译并运行TcpServer，ChargingUser和admin。
