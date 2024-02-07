@@ -7,9 +7,9 @@ c)管理员客户端具备的功能包括：启动/关闭充电桩；查看所�
 ## 2. 开发环境
 Visual Studio Code, Qt Creator, MinGW 64bit
 ## 3. 部署运行
-（1）在Pile目录下执行如下命令可生成pileproc.exe。
+（1）在 Pile 目录下执行如下命令可生成 pileproc.exe。
 ```powershell
 g++ -o pileproc pileproc.cpp pile.cpp -lws2_32
 ```
-（2）将pileproc.exe所在目录加入系统环境变量。<br />
-（3）使用Qt Creator编译并运行TcpServer，ChargingUser和admin。
+（2）将 pileproc.exe 所在目录加入系统环境变量。<br />
+（3）使用 Qt Creator 编译并运行 TcpServer，ChargingUser 和 admin。
